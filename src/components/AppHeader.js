@@ -3,7 +3,7 @@ import Button from './Button';
 import styles from '../styles/modules/app.module.scss';
 import TodoModal from './TodoModal';
 
-function AppHeader() {
+function AppHeader({ currentUser }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (

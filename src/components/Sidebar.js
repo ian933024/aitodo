@@ -5,9 +5,9 @@ import { isAfter, endOfWeek, addDays, parseISO } from 'date-fns';
 import { updateFilterStatus, updateDueDateFilter, updateHashtagFilter } from '../slices/todoSlice';
 import TodoModal from './TodoModal';
 import styles from '../styles/modules/sidebar.module.scss';
-import { FaHome, FaCalendarDay, FaCalendarWeek, FaHashtag, FaCheckCircle, FaPlus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaHome, FaCalendarDay, FaCalendarWeek, FaHashtag, FaCheckCircle, FaPlus, FaChevronLeft, FaChevronRight, FaSignOutAlt, FaUser } from 'react-icons/fa';
 
-function Sidebar({ onSidebarToggle }) {
+function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const todoList = useSelector((state) => state.todo.todoList);
@@ -138,6 +138,12 @@ function Sidebar({ onSidebarToggle }) {
           <h1 className={styles.sidebarTitle}>
             <span className={styles.todoIcon}>📝</span> ToDoApp
           </h1>
+          {currentUser && (
+            <div className={styles.userInfo}>
+              <FaUser className={styles.userIcon} />
+              <span className={styles.username}>{currentUser}</span>
+            </div>
+          )}
         </div>
         
         <div className={styles.sidebarSection}>
@@ -270,6 +276,18 @@ function Sidebar({ onSidebarToggle }) {
             <FaPlus className={styles.sidebarIcon} />
             <span className={styles.buttonText}>Add New Task</span>
           </motion.button>
+          
+          {onLogout && (
+            <motion.button
+              className={styles.logoutButton}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onLogout}
+            >
+              <FaSignOutAlt className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Logout</span>
+            </motion.button>
+          )}
           
           <div className={styles.copyright}>
             &copy; {new Date().getFullYear()} TodoApp
