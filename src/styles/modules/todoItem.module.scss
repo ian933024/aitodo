@@ -64,6 +64,17 @@
 	margin-top: -0.2rem;
 	color: var(--black-2);
 }
+
+.dueDate {
+	font-weight: 500;
+	color: var(--primaryPurple);
+}
+
+.noDueDate {
+	font-weight: 400;
+	color: var(--gray-2);
+	font-style: italic;
+}
 .todoActions {
 	display: flex;
 	align-items: center;

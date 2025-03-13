@@ -48,6 +48,8 @@ export const todoSlice = createSlice({
           if (todo.id === action.payload.id) {
             todo.status = action.payload.status;
             todo.title = action.payload.title;
+            todo.dueDate = action.payload.dueDate;
+            todo.dueDateType = action.payload.dueDateType;
           }
         });
         window.localStorage.setItem('todoList', JSON.stringify(todoListArr));

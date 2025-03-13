@@ -62,7 +62,14 @@ function TodoItem({ todo }) {
               {todo.title}
             </p>
             <p className={styles.time}>
-              {format(new Date(todo.time), 'p, MM/dd/yyyy')}
+              {todo.dueDate && (
+                <span className={styles.dueDate}>
+                  Due: {format(new Date(todo.dueDate), 'MM/dd/yyyy')}
+                </span>
+              )}
+              {!todo.dueDate && (
+                <span className={styles.noDueDate}>No due date</span>
+              )}
             </p>
           </div>
         </div>

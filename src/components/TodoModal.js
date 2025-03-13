@@ -4,7 +4,7 @@ import { MdOutlineClose } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { format } from 'date-fns';
+import { format, endOfWeek, endOfNextWeek, addDays } from 'date-fns';
 import { addTodo, updateTodo } from '../slices/todoSlice';
 import styles from '../styles/modules/modal.module.scss';
 import Button from './Button';
@@ -34,14 +34,44 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [status, setStatus] = useState('incomplete');
+  const [dueDateType, setDueDateType] = useState('no-due-date');
+  const [customDueDate, setCustomDueDate] = useState('');
+
+  // Calculate end of current week (Sunday)
+  const getEndOfWeek = () => {
+    return endOfWeek(new Date());
+  };
+
+  // Calculate end of next week (Sunday)
+  const getEndOfNextWeek = () => {
+    return endOfWeek(addDays(new Date(), 7));
+  };
+
+  // Get the actual due date based on selection
+  const getActualDueDate = () => {
+    switch (dueDateType) {
+      case 'this-week':
+        return format(getEndOfWeek(), 'yyyy-MM-dd');
+      case 'next-week':
+        return format(getEndOfNextWeek(), 'yyyy-MM-dd');
+      case 'custom':
+        return customDueDate;
+      default:
+        return '';
+    }
+  };
 
   useEffect(() => {
     if (type === 'update' && todo) {
       setTitle(todo.title);
       setStatus(todo.status);
+      setDueDateType(todo.dueDateType || 'no-due-date');
+      setCustomDueDate(todo.dueDate || '');
     } else {
       setTitle('');
       setStatus('incomplete');
+      setDueDateType('no-due-date');
+      setCustomDueDate('');
     }
   }, [type, todo, modalOpen]);
 
@@ -51,6 +81,10 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
       toast.error('Please enter a title');
       return;
     }
+    
+    // Get the actual due date
+    const dueDate = getActualDueDate();
+    
     if (title) {
       if (type === 'add') {
         dispatch(
@@ -59,13 +93,26 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
             title,
             status: 'incomplete', // Always set new tasks to incomplete
             time: format(new Date(), 'p, MM/dd/yyyy'),
+            dueDate, // Add due date
+            dueDateType // Add due date type
           })
         );
         toast.success('Task added successfully');
       }
       if (type === 'update') {
-        if (todo.title !== title || todo.status !== status) {
-          dispatch(updateTodo({ ...todo, title, status }));
+        if (
+          todo.title !== title || 
+          todo.status !== status || 
+          todo.dueDate !== dueDate || 
+          todo.dueDateType !== dueDateType
+        ) {
+          dispatch(updateTodo({ 
+            ...todo, 
+            title, 
+            status, 
+            dueDate,
+            dueDateType 
+          }));
           toast.success('Task Updated successfully');
         } else {
           toast.error('No changes made');
@@ -119,6 +166,30 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </label>
+              <label htmlFor="dueDate">
+                Due Date
+                <select
+                  id="dueDate"
+                  value={dueDateType}
+                  onChange={(e) => setDueDateType(e.target.value)}
+                >
+                  <option value="no-due-date">No Due Date</option>
+                  <option value="this-week">This Week</option>
+                  <option value="next-week">Next Week</option>
+                  <option value="custom">Custom Date</option>
+                </select>
+              </label>
+              {dueDateType === 'custom' && (
+                <label htmlFor="customDate">
+                  Select Date
+                  <input
+                    type="date"
+                    id="customDate"
+                    value={customDueDate}
+                    onChange={(e) => setCustomDueDate(e.target.value)}
+                  />
+                </label>
+              )}
               {type === 'update' && (
                 <label htmlFor="type">
                   Status
