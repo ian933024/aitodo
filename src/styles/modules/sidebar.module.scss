@@ -1,4 +1,4 @@
-@import '../_mixins.scss';
+@import "../_mixins.scss";
 
 .sidebar {
   position: fixed;
@@ -13,22 +13,22 @@
   flex-direction: column;
   transition: transform 0.3s ease;
   z-index: 1000;
-  
+
   &.closed {
     transform: translateX(-100%);
-    
+
     .toggleButton {
       right: -32px;
     }
   }
-  
+
   @include smallDeviceSize {
     width: 220px;
   }
-  
+
   @media (max-width: 576px) {
     width: 100%;
-    
+
     &.closed {
       .toggleButton {
         right: 10px;
@@ -54,7 +54,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: var(--black-1);
   }
@@ -72,7 +72,7 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  
+
   @include smallDeviceSize {
     font-size: 1.8rem;
   }
@@ -80,7 +80,7 @@
 
 .todoIcon {
   font-size: 2.4rem;
-  
+
   @include smallDeviceSize {
     font-size: 2rem;
   }
@@ -116,7 +116,7 @@
   flex-direction: column;
   gap: 0.8rem;
   padding-top: 2rem;
-  
+
   &:first-of-type {
     padding-top: 3rem;
   }
@@ -142,11 +142,11 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   position: relative;
-  
+
   &:hover {
     background-color: var(--bg-2);
   }
-  
+
   &.active {
     background-color: var(--bg-2);
     color: var(--primaryPurple);
@@ -195,7 +195,7 @@
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  
+
   &:hover {
     background-color: darken(#646ff0, 10%);
   }
@@ -216,7 +216,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
-  
+
   &:hover {
     background-color: #ffded3;
     color: #ff6347;

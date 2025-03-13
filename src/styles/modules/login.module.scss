@@ -1,4 +1,4 @@
-@import '../_mixins.scss';
+@import "../_mixins.scss";
 
 .loginContainer {
   display: flex;
@@ -16,7 +16,7 @@
   width: 100%;
   max-width: 500px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  
+
   @include smallDeviceSize {
     padding: 2rem;
   }
@@ -40,7 +40,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
+
   label {
     font-size: 1.4rem;
     color: var(--black-1);
@@ -52,7 +52,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  
+
   input {
     width: 100%;
     padding: 1.2rem 1.2rem 1.2rem 4rem;
@@ -60,7 +60,7 @@
     border-radius: 6px;
     font-size: 1.6rem;
     transition: border-color 0.3s ease;
-    
+
     &:focus {
       border-color: var(--primaryPurple);
       outline: none;
@@ -85,7 +85,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  
+
   &:hover {
     background-color: darken(#646ff0, 10%);
   }
@@ -97,7 +97,7 @@
   justify-content: center;
   gap: 0.8rem;
   margin-top: 1rem;
-  
+
   span {
     font-size: 1.4rem;
     color: var(--black-2);
@@ -116,7 +116,7 @@
 
 .userList {
   margin-top: 3rem;
-  
+
   h3 {
     font-size: 1.6rem;
     color: var(--black-1);
@@ -145,7 +145,7 @@
   color: var(--black-1);
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: var(--primaryPurple);
     color: var(--white);

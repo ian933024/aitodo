@@ -1,27 +1,44 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  getTodos,
+  addTodo as fbAddTodo,
+  updateTodo as fbUpdateTodo,
+  deleteTodo as fbDeleteTodo,
+} from '../firebase/todoService';
 
-const getInitialTodo = (username) => {
-  // If no username, return empty array
-  if (!username) {
-    return [];
+// Async thunks for Firestore operations
+export const fetchTodos = createAsyncThunk(
+  'todos/fetchTodos',
+  async (username) => {
+    if (!username) return [];
+    const response = await getTodos(username);
+    return response;
   }
-  
-  // getting user-specific todo list
-  const localTodoList = window.localStorage.getItem(`todoList_${username}`);
-  // if todo list is not empty
-  if (localTodoList) {
-    return JSON.parse(localTodoList);
-  }
-  window.localStorage.setItem(`todoList_${username}`, JSON.stringify([]));
-  return [];
-};
+);
+
+export const createTodo = createAsyncThunk('todos/createTodo', async (todo) => {
+  const docRef = await fbAddTodo(todo);
+  return { id: docRef.id, ...todo };
+});
+
+export const editTodo = createAsyncThunk('todos/editTodo', async (todo) => {
+  await fbUpdateTodo(todo.id, todo);
+  return todo;
+});
+
+export const removeTodo = createAsyncThunk('todos/removeTodo', async (id) => {
+  await fbDeleteTodo(id);
+  return id;
+});
 
 const initialValue = {
   filterStatus: 'all',
   dueDateFilter: 'all',
   hashtagFilter: '',
   todoList: [],
-  currentUser: ''
+  currentUser: '',
+  loading: false,
+  error: null,
 };
 
 export const todoSlice = createSlice({
@@ -30,70 +47,6 @@ export const todoSlice = createSlice({
   reducers: {
     setCurrentUser: (state, action) => {
       state.currentUser = action.payload;
-      // Load todos for the current user
-      state.todoList = getInitialTodo(action.payload);
-    },
-    addTodo: (state, action) => {
-      state.todoList.push(action.payload);
-      const username = state.currentUser;
-      
-      if (!username) return;
-      
-      const todoList = window.localStorage.getItem(`todoList_${username}`);
-      if (todoList) {
-        const todoListArr = JSON.parse(todoList);
-        todoListArr.push({
-          ...action.payload,
-        });
-        window.localStorage.setItem(`todoList_${username}`, JSON.stringify(todoListArr));
-      } else {
-        window.localStorage.setItem(
-          `todoList_${username}`,
-          JSON.stringify([
-            {
-              ...action.payload,
-            },
-          ])
-        );
-      }
-    },
-    updateTodo: (state, action) => {
-      const username = state.currentUser;
-      
-      if (!username) return;
-      
-      const todoList = window.localStorage.getItem(`todoList_${username}`);
-      if (todoList) {
-        const todoListArr = JSON.parse(todoList);
-        todoListArr.forEach((todo) => {
-          if (todo.id === action.payload.id) {
-            todo.status = action.payload.status;
-            todo.title = action.payload.title;
-            todo.dueDate = action.payload.dueDate;
-            todo.dueDateType = action.payload.dueDateType;
-            todo.hashtags = action.payload.hashtags;
-          }
-        });
-        window.localStorage.setItem(`todoList_${username}`, JSON.stringify(todoListArr));
-        state.todoList = [...todoListArr];
-      }
-    },
-    deleteTodo: (state, action) => {
-      const username = state.currentUser;
-      
-      if (!username) return;
-      
-      const todoList = window.localStorage.getItem(`todoList_${username}`);
-      if (todoList) {
-        const todoListArr = JSON.parse(todoList);
-        todoListArr.forEach((todo, index) => {
-          if (todo.id === action.payload) {
-            todoListArr.splice(index, 1);
-          }
-        });
-        window.localStorage.setItem(`todoList_${username}`, JSON.stringify(todoListArr));
-        state.todoList = todoListArr;
-      }
     },
     updateFilterStatus: (state, action) => {
       state.filterStatus = action.payload;
@@ -105,15 +58,46 @@ export const todoSlice = createSlice({
       state.hashtagFilter = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      // Fetch todos
+      .addCase(fetchTodos.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.todoList = action.payload;
+      })
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // Create todo
+      .addCase(createTodo.fulfilled, (state, action) => {
+        state.todoList.push(action.payload);
+      })
+      // Update todo
+      .addCase(editTodo.fulfilled, (state, action) => {
+        const index = state.todoList.findIndex(
+          (todo) => todo.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.todoList[index] = action.payload;
+        }
+      })
+      // Delete todo
+      .addCase(removeTodo.fulfilled, (state, action) => {
+        state.todoList = state.todoList.filter(
+          (todo) => todo.id !== action.payload
+        );
+      });
+  },
 });
 
-export const { 
+export const {
   setCurrentUser,
-  addTodo, 
-  updateTodo, 
-  deleteTodo, 
-  updateFilterStatus, 
+  updateFilterStatus,
   updateDueDateFilter,
-  updateHashtagFilter
+  updateHashtagFilter,
 } = todoSlice.actions;
 export default todoSlice.reducer;
