@@ -6,7 +6,7 @@ import { MdDelete, MdEdit } from 'react-icons/md';
 import { BsCalendarPlus, BsCalendarX } from 'react-icons/bs';
 import { FaCalendarDay, FaCalendarWeek, FaHashtag } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { deleteTodo, updateTodo } from '../slices/todoSlice';
+import { removeTodo, editTodo } from '../slices/todoSlice';
 import styles from '../styles/modules/todoItem.module.scss';
 import { getClasses } from '../utils/getClasses';
 import CheckButton from './CheckButton';
@@ -37,14 +37,30 @@ function TodoItem({ todo }) {
 
   const handleCheck = () => {
     setChecked(!checked);
-    dispatch(
-      updateTodo({ ...todo, status: checked ? 'incomplete' : 'complete' })
-    );
+    const updatedTodo = {
+      ...todo,
+      status: checked ? 'incomplete' : 'complete',
+    };
+    dispatch(editTodo(updatedTodo))
+      .unwrap()
+      .then(() => {
+        // Success is silent as the UI updates immediately
+      })
+      .catch((error) => {
+        toast.error(`Failed to update status: ${error.message}`);
+        setChecked(!checked); // Revert the checkbox state
+      });
   };
 
   const handleDelete = () => {
-    dispatch(deleteTodo(todo.id));
-    toast.success('Todo Deleted Successfully');
+    dispatch(removeTodo(todo.id))
+      .unwrap()
+      .then(() => {
+        toast.success('Todo Deleted Successfully');
+      })
+      .catch((error) => {
+        toast.error(`Failed to delete todo: ${error.message}`);
+      });
   };
 
   const handleUpdate = () => {
@@ -52,37 +68,76 @@ function TodoItem({ todo }) {
   };
 
   const handleMoveToNextWeek = () => {
+    let newDueDate;
     if (todo.dueDate) {
-      const newDueDate = addWeeks(new Date(todo.dueDate), 1).toISOString();
-      dispatch(updateTodo({ ...todo, dueDate: newDueDate }));
-      toast.success('Due date moved to next week');
+      const [newDateString] = addWeeks(new Date(todo.dueDate), 1)
+        .toISOString()
+        .split('T');
+      newDueDate = newDateString;
     } else {
-      const newDueDate = addWeeks(new Date(), 1).toISOString();
-      dispatch(updateTodo({ ...todo, dueDate: newDueDate }));
-      toast.success('Due date set to next week');
+      const [newDateString] = addWeeks(new Date(), 1).toISOString().split('T');
+      newDueDate = newDateString;
     }
+
+    const updatedTodo = { ...todo, dueDate: newDueDate };
+    dispatch(editTodo(updatedTodo))
+      .unwrap()
+      .then(() => {
+        toast.success('Due date moved to next week');
+      })
+      .catch((error) => {
+        toast.error(`Failed to update due date: ${error.message}`);
+      });
   };
+
   const handleMoveToTwoWeeksLater = () => {
+    let newDueDate;
     if (todo.dueDate) {
-      const newDueDate = addWeeks(new Date(todo.dueDate), 2).toISOString();
-      dispatch(updateTodo({ ...todo, dueDate: newDueDate }));
-      toast.success('Due date moved to two weeks later');
+      const [newDateString] = addWeeks(new Date(todo.dueDate), 2)
+        .toISOString()
+        .split('T');
+      newDueDate = newDateString;
     } else {
-      const newDueDate = addWeeks(new Date(), 2).toISOString();
-      dispatch(updateTodo({ ...todo, dueDate: newDueDate }));
-      toast.success('Due date set to two weeks later');
+      const [newDateString] = addWeeks(new Date(), 2).toISOString().split('T');
+      newDueDate = newDateString;
     }
+
+    const updatedTodo = { ...todo, dueDate: newDueDate };
+    dispatch(editTodo(updatedTodo))
+      .unwrap()
+      .then(() => {
+        toast.success('Due date moved to two weeks later');
+      })
+      .catch((error) => {
+        toast.error(`Failed to update due date: ${error.message}`);
+      });
   };
 
   const handleSetDueToday = () => {
-    const newDueDate = new Date().toISOString();
-    dispatch(updateTodo({ ...todo, dueDate: newDueDate }));
-    toast.success('Due date set to today');
+    const newDueDate = new Date().toISOString().split('T')[0];
+    const updatedTodo = { ...todo, dueDate: newDueDate };
+
+    dispatch(editTodo(updatedTodo))
+      .unwrap()
+      .then(() => {
+        toast.success('Due date set to today');
+      })
+      .catch((error) => {
+        toast.error(`Failed to update due date: ${error.message}`);
+      });
   };
 
   const handleCancelDueDate = () => {
-    dispatch(updateTodo({ ...todo, dueDate: null }));
-    toast.success('Due date cancelled');
+    const updatedTodo = { ...todo, dueDate: null };
+
+    dispatch(editTodo(updatedTodo))
+      .unwrap()
+      .then(() => {
+        toast.success('Due date cancelled');
+      })
+      .catch((error) => {
+        toast.error(`Failed to cancel due date: ${error.message}`);
+      });
   };
 
   const handleHashtagClick = (tag) => {
@@ -113,10 +168,18 @@ function TodoItem({ todo }) {
     const currentTags = todo.hashtags ? todo.hashtags.trim() : '';
     const updatedHashtags = currentTags ? `${currentTags} ${tag}` : tag;
 
-    dispatch(updateTodo({ ...todo, hashtags: updatedHashtags }));
-    toast.success(`Added hashtag: ${tag}`);
-    setQuickHashtagOpen(false);
-    setNewHashtag('');
+    const updatedTodo = { ...todo, hashtags: updatedHashtags };
+
+    dispatch(editTodo(updatedTodo))
+      .unwrap()
+      .then(() => {
+        toast.success(`Added hashtag: ${tag}`);
+        setQuickHashtagOpen(false);
+        setNewHashtag('');
+      })
+      .catch((error) => {
+        toast.error(`Failed to add hashtag: ${error.message}`);
+      });
   };
 
   return (
@@ -146,11 +209,13 @@ function TodoItem({ todo }) {
             {todo.hashtags && todo.hashtags.trim() !== '' && (
               <p className={styles.hashtags}>
                 {todo.hashtags.split(/\s+/).map((tag, index) => (
-                  <span 
-                    key={index} 
+                  <span
+                    key={index}
                     className={styles.hashtag}
                     onClick={() => handleHashtagClick(tag)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleHashtagClick(tag)}
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' && handleHashtagClick(tag)
+                    }
                     role="button"
                     tabIndex={0}
                   >
@@ -160,7 +225,10 @@ function TodoItem({ todo }) {
               </p>
             )}
             {quickHashtagOpen && (
-              <form onSubmit={handleAddNewHashtag} className={styles.quickHashtagForm}>
+              <form
+                onSubmit={handleAddNewHashtag}
+                className={styles.quickHashtagForm}
+              >
                 <input
                   type="text"
                   value={newHashtag}
@@ -169,7 +237,9 @@ function TodoItem({ todo }) {
                   className={styles.quickHashtagInput}
                   ref={(input) => input && input.focus()}
                 />
-                <button type="submit" className={styles.quickHashtagButton}>Add</button>
+                <button type="submit" className={styles.quickHashtagButton}>
+                  Add
+                </button>
               </form>
             )}
           </div>

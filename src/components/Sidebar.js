@@ -2,10 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { isAfter, endOfWeek, addDays, parseISO } from 'date-fns';
-import { updateFilterStatus, updateDueDateFilter, updateHashtagFilter } from '../slices/todoSlice';
+import {
+  FaHome,
+  FaCalendarDay,
+  FaCalendarWeek,
+  FaHashtag,
+  FaCheckCircle,
+  FaPlus,
+  FaChevronLeft,
+  FaChevronRight,
+  FaSignOutAlt,
+  FaUser,
+} from 'react-icons/fa';
+import {
+  updateFilterStatus,
+  updateDueDateFilter,
+  updateHashtagFilter,
+} from '../slices/todoSlice';
 import TodoModal from './TodoModal';
 import styles from '../styles/modules/sidebar.module.scss';
-import { FaHome, FaCalendarDay, FaCalendarWeek, FaHashtag, FaCheckCircle, FaPlus, FaChevronLeft, FaChevronRight, FaSignOutAlt, FaUser } from 'react-icons/fa';
 
 function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
   const dispatch = useDispatch();
@@ -39,35 +54,35 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
       all: todoList.length,
       today: 0,
       thisWeek: 0,
-      completed: 0
+      completed: 0,
     };
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
-    
+
     const weekEnd = new Date();
     weekEnd.setDate(weekEnd.getDate() + (7 - weekEnd.getDay()));
     weekEnd.setHours(23, 59, 59, 999);
 
-    todoList.forEach(todo => {
+    todoList.forEach((todo) => {
       // Count completed tasks
       if (todo.status === 'complete') {
-        taskCounts.completed++;
+        taskCounts.completed += 1;
       }
 
       // Count today's tasks
       if (todo.dueDate) {
         const dueDate = new Date(todo.dueDate);
         if (dueDate >= today && dueDate <= todayEnd) {
-          taskCounts.today++;
+          taskCounts.today += 1;
         }
-        
+
         // Count this week's tasks
         if (dueDate >= today && dueDate <= weekEnd) {
-          taskCounts.thisWeek++;
+          taskCounts.thisWeek += 1;
         }
       }
     });
@@ -97,21 +112,21 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
   // Function to check if a date is in next week but not in this week
   const isNextWeekOnly = (dateStr) => {
     if (!dateStr) return false;
-    
+
     const date = parseISO(dateStr);
     const thisWeekEnd = endOfWeek(new Date());
     const nextWeekEnd = endOfWeek(addDays(new Date(), 7));
-    
+
     return isAfter(date, thisWeekEnd) && !isAfter(date, nextWeekEnd);
   };
-  
+
   // Function to check if a date is further than next week
   const isFurther = (dateStr) => {
     if (!dateStr) return false;
-    
+
     const date = parseISO(dateStr);
     const nextWeekEnd = endOfWeek(addDays(new Date(), 7));
-    
+
     return isAfter(date, nextWeekEnd);
   };
 
@@ -126,14 +141,15 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
   return (
     <>
       <div className={`${styles.sidebar} ${sidebarOpen ? '' : styles.closed}`}>
-        <button 
+        <button
+          type="button"
           className={styles.toggleButton}
           onClick={toggleSidebar}
           aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {sidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
         </button>
-        
+
         <div className={styles.sidebarHeader}>
           <h1 className={styles.sidebarTitle}>
             <span className={styles.todoIcon}>📝</span> ToDoApp
@@ -145,11 +161,15 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             </div>
           )}
         </div>
-        
+
         <div className={styles.sidebarSection}>
           <h3 className={styles.sectionTitle}>Main</h3>
           <motion.button
-            className={`${styles.sidebarButton} ${dueDateFilter === 'all' && filterStatus === 'all' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              dueDateFilter === 'all' && filterStatus === 'all'
+                ? styles.active
+                : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
@@ -161,9 +181,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <span className={styles.buttonText}>All Tasks</span>
             <span className={styles.count}>{counts.all}</span>
           </motion.button>
-          
+
           <motion.button
-            className={`${styles.sidebarButton} ${dueDateFilter === 'today' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              dueDateFilter === 'today' ? styles.active : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleFilterByDate('today')}
@@ -172,9 +194,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <span className={styles.buttonText}>Today</span>
             <span className={styles.count}>{counts.today}</span>
           </motion.button>
-          
+
           <motion.button
-            className={`${styles.sidebarButton} ${dueDateFilter === 'this-week' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              dueDateFilter === 'this-week' ? styles.active : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleFilterByDate('this-week')}
@@ -183,9 +207,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <span className={styles.buttonText}>This Week</span>
             <span className={styles.count}>{counts.thisWeek}</span>
           </motion.button>
-          
+
           <motion.button
-            className={`${styles.sidebarButton} ${dueDateFilter === 'next-week' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              dueDateFilter === 'next-week' ? styles.active : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleFilterByDate('next-week')}
@@ -193,15 +219,19 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <FaCalendarWeek className={styles.sidebarIcon} />
             <span className={styles.buttonText}>Next Week</span>
             <span className={styles.count}>
-              {todoList.filter(todo => {
-                if (!todo.dueDate) return false;
-                return isNextWeekOnly(todo.dueDate);
-              }).length}
+              {
+                todoList.filter((todo) => {
+                  if (!todo.dueDate) return false;
+                  return isNextWeekOnly(todo.dueDate);
+                }).length
+              }
             </span>
           </motion.button>
-          
+
           <motion.button
-            className={`${styles.sidebarButton} ${dueDateFilter === 'further' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              dueDateFilter === 'further' ? styles.active : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleFilterByDate('further')}
@@ -209,19 +239,22 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <FaCalendarDay className={styles.sidebarIcon} />
             <span className={styles.buttonText}>Future</span>
             <span className={styles.count}>
-              {todoList.filter(todo => {
-                if (!todo.dueDate) return false;
-                return isFurther(todo.dueDate);
-              }).length}
+              {
+                todoList.filter((todo) => {
+                  if (!todo.dueDate) return false;
+                  return isFurther(todo.dueDate);
+                }).length
+              }
             </span>
           </motion.button>
-          
         </div>
-        
+
         <div className={styles.sidebarSection}>
           <h3 className={styles.sectionTitle}>Status</h3>
           <motion.button
-            className={`${styles.sidebarButton} ${filterStatus === 'incomplete' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              filterStatus === 'incomplete' ? styles.active : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleFilterByStatus('incomplete')}
@@ -229,12 +262,14 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <FaCheckCircle className={styles.sidebarIcon} />
             <span className={styles.buttonText}>Incomplete</span>
             <span className={styles.count}>
-              {todoList.filter(todo => todo.status === 'incomplete').length}
+              {todoList.filter((todo) => todo.status === 'incomplete').length}
             </span>
           </motion.button>
-          
+
           <motion.button
-            className={`${styles.sidebarButton} ${filterStatus === 'complete' ? styles.active : ''}`}
+            className={`${styles.sidebarButton} ${
+              filterStatus === 'complete' ? styles.active : ''
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleFilterByStatus('complete')}
@@ -244,14 +279,16 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <span className={styles.count}>{counts.completed}</span>
           </motion.button>
         </div>
-        
+
         {uniqueHashtags.length > 0 && (
           <div className={styles.sidebarSection}>
             <h3 className={styles.sectionTitle}>Hashtags</h3>
             {uniqueHashtags.map((tag, index) => (
               <motion.button
                 key={index}
-                className={`${styles.sidebarButton} ${hashtagFilter === tag ? styles.active : ''}`}
+                className={`${styles.sidebarButton} ${
+                  hashtagFilter === tag ? styles.active : ''
+                }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleFilterByHashtag(tag)}
@@ -259,7 +296,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
                 <FaHashtag className={styles.sidebarIcon} />
                 <span className={styles.buttonText}>{tag}</span>
                 <span className={styles.count}>
-                  {todoList.filter(todo => todo.hashtags && todo.hashtags.includes(tag)).length}
+                  {
+                    todoList.filter(
+                      (todo) => todo.hashtags && todo.hashtags.includes(tag)
+                    ).length
+                  }
                 </span>
               </motion.button>
             ))}
@@ -276,7 +317,7 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <FaPlus className={styles.sidebarIcon} />
             <span className={styles.buttonText}>Add New Task</span>
           </motion.button>
-          
+
           {onLogout && (
             <motion.button
               className={styles.logoutButton}
@@ -288,7 +329,7 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
               <span className={styles.buttonText}>Logout</span>
             </motion.button>
           )}
-          
+
           <div className={styles.copyright}>
             &copy; {new Date().getFullYear()} TodoApp
           </div>

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import { MdOutlineClose } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { format, endOfWeek, endOfNextWeek, addDays } from 'date-fns';
-import { addTodo, updateTodo } from '../slices/todoSlice';
+import { format, endOfWeek, addDays } from 'date-fns';
+import { createTodo, editTodo } from '../slices/todoSlice';
 import styles from '../styles/modules/modal.module.scss';
 import Button from './Button';
 
@@ -39,14 +38,10 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const [hashtags, setHashtags] = useState('');
 
   // Calculate end of current week (Sunday)
-  const getEndOfWeek = () => {
-    return endOfWeek(new Date());
-  };
+  const getEndOfWeek = () => endOfWeek(new Date());
 
   // Calculate end of next week (Sunday)
-  const getEndOfNextWeek = () => {
-    return endOfWeek(addDays(new Date(), 7));
-  };
+  const getEndOfNextWeek = () => endOfWeek(addDays(new Date(), 7));
 
   // Get the actual due date based on selection
   const getActualDueDate = () => {
@@ -84,48 +79,65 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
       toast.error('Please enter a title');
       return;
     }
-    
+
     // Get the actual due date
     const dueDate = getActualDueDate();
-    
+
     if (title) {
       if (type === 'add') {
-        dispatch(
-          addTodo({
-            id: uuid(),
-            title,
-            status: 'incomplete', // Always set new tasks to incomplete
-            time: format(new Date(), 'p, MM/dd/yyyy'),
-            dueDate, // Add due date
-            dueDateType, // Add due date type
-            hashtags // Add hashtags
+        const currentUser = localStorage.getItem('currentTodoUser');
+        const newTodo = {
+          title,
+          status: 'incomplete', // Always set new tasks to incomplete
+          time: format(new Date(), 'p, MM/dd/yyyy'),
+          dueDate, // Add due date
+          dueDateType, // Add due date type
+          hashtags, // Add hashtags
+          user: currentUser, // Add user reference
+        };
+
+        dispatch(createTodo(newTodo))
+          .unwrap()
+          .then(() => {
+            toast.success('Task added successfully');
+            setModalOpen(false);
           })
-        );
-        toast.success('Task added successfully');
+          .catch((error) => {
+            toast.error(`Failed to add task: ${error.message}`);
+          });
       }
       if (type === 'update') {
         if (
-          todo.title !== title || 
-          todo.status !== status || 
-          todo.dueDate !== dueDate || 
+          todo.title !== title ||
+          todo.status !== status ||
+          todo.dueDate !== dueDate ||
           todo.dueDateType !== dueDateType ||
           todo.hashtags !== hashtags
         ) {
-          dispatch(updateTodo({ 
-            ...todo, 
-            title, 
-            status, 
+          const updatedTodo = {
+            ...todo,
+            title,
+            status,
             dueDate,
             dueDateType,
-            hashtags 
-          }));
-          toast.success('Task Updated successfully');
+            hashtags,
+          };
+
+          dispatch(editTodo(updatedTodo))
+            .unwrap()
+            .then(() => {
+              toast.success('Task updated successfully');
+              setModalOpen(false);
+            })
+            .catch((error) => {
+              toast.error(`Failed to update task: ${error.message}`);
+            });
         } else {
           toast.error('No changes made');
-          return;
         }
+      } else {
+        setModalOpen(false);
       }
-      setModalOpen(false);
     }
   };
 
