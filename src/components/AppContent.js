@@ -27,6 +27,7 @@ function AppContent() {
   const todoList = useSelector((state) => state.todo.todoList);
   const filterStatus = useSelector((state) => state.todo.filterStatus);
   const dueDateFilter = useSelector((state) => state.todo.dueDateFilter);
+  const hashtagFilter = useSelector((state) => state.todo.hashtagFilter);
 
   // Function to check if a date is in next week but not in this week
   const isNextWeekOnly = (dateStr) => {
@@ -61,7 +62,7 @@ function AppContent() {
   });
 
   // Then filter by due date
-  const filteredTodoList = statusFilteredList.filter((item) => {
+  const dueDateFilteredList = statusFilteredList.filter((item) => {
     // All due dates
     if (dueDateFilter === 'all') {
       return true;
@@ -93,6 +94,14 @@ function AppContent() {
     }
     
     return true;
+  });
+  
+  // Finally filter by hashtag if applicable
+  const filteredTodoList = dueDateFilteredList.filter((item) => {
+    if (!hashtagFilter) {
+      return true;
+    }
+    return item.hashtags && item.hashtags.includes(hashtagFilter);
   });
 
   return (

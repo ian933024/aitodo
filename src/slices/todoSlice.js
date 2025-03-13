@@ -14,6 +14,7 @@ const getInitialTodo = () => {
 const initialValue = {
   filterStatus: 'all',
   dueDateFilter: 'all',
+  hashtagFilter: '',
   todoList: getInitialTodo(),
 };
 
@@ -77,6 +78,9 @@ export const todoSlice = createSlice({
     updateDueDateFilter: (state, action) => {
       state.dueDateFilter = action.payload;
     },
+    updateHashtagFilter: (state, action) => {
+      state.hashtagFilter = action.payload;
+    },
   },
 });
 
@@ -85,6 +89,7 @@ export const {
   updateTodo, 
   deleteTodo, 
   updateFilterStatus, 
-  updateDueDateFilter 
+  updateDueDateFilter,
+  updateHashtagFilter
 } = todoSlice.actions;
 export default todoSlice.reducer;

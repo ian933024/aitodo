@@ -25,6 +25,7 @@ body {
 	width: 100%;
 	min-height: 100vh;
 	background-color: var(--bg-1);
+	overflow-x: hidden;
 }
 * {
 	font-family: 'Poppins', sans-serif;
@@ -33,4 +34,5 @@ body {
 	width: 90%;
 	max-width: 1200px;
 	margin: 0 auto;
+	padding: 2rem 0;
 }
