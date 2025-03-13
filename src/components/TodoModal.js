@@ -51,13 +51,13 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
       toast.error('Please enter a title');
       return;
     }
-    if (title && status) {
+    if (title) {
       if (type === 'add') {
         dispatch(
           addTodo({
             id: uuid(),
             title,
-            status,
+            status: 'incomplete', // Always set new tasks to incomplete
             time: format(new Date(), 'p, MM/dd/yyyy'),
           })
         );
@@ -119,17 +119,19 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </label>
-              <label htmlFor="type">
-                Status
-                <select
-                  id="type"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value="incomplete">Incomplete</option>
-                  <option value="complete">Completed</option>
-                </select>
-              </label>
+              {type === 'update' && (
+                <label htmlFor="type">
+                  Status
+                  <select
+                    id="type"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option value="incomplete">Incomplete</option>
+                    <option value="complete">Completed</option>
+                  </select>
+                </label>
+              )}
               <div className={styles.buttonContainer}>
                 <Button type="submit" variant="primary">
                   {type === 'add' ? 'Add Task' : 'Update Task'}
