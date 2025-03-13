@@ -4,9 +4,8 @@
 
 A complete todo application with all features.
 
-**live demo: [https://wc-react-todo-app.netlify.app/](https://wc-react-todo-app.netlify.app/)**
+**live demo: not availible currently
 
-**Watch On Youtube: [https://youtu.be/W0Uf_xu350k](https://youtu.be/W0Uf_xu350k)**
 
 
 ---
