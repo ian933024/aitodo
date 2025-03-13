@@ -51,6 +51,7 @@ export const todoSlice = createSlice({
             todo.title = action.payload.title;
             todo.dueDate = action.payload.dueDate;
             todo.dueDateType = action.payload.dueDateType;
+            todo.hashtags = action.payload.hashtags;
           }
         });
         window.localStorage.setItem('todoList', JSON.stringify(todoListArr));

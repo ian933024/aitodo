@@ -36,6 +36,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const [status, setStatus] = useState('incomplete');
   const [dueDateType, setDueDateType] = useState('no-due-date');
   const [customDueDate, setCustomDueDate] = useState('');
+  const [hashtags, setHashtags] = useState('');
 
   // Calculate end of current week (Sunday)
   const getEndOfWeek = () => {
@@ -67,11 +68,13 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
       setStatus(todo.status);
       setDueDateType(todo.dueDateType || 'no-due-date');
       setCustomDueDate(todo.dueDate || '');
+      setHashtags(todo.hashtags || '');
     } else {
       setTitle('');
       setStatus('incomplete');
       setDueDateType('no-due-date');
       setCustomDueDate('');
+      setHashtags('');
     }
   }, [type, todo, modalOpen]);
 
@@ -94,7 +97,8 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
             status: 'incomplete', // Always set new tasks to incomplete
             time: format(new Date(), 'p, MM/dd/yyyy'),
             dueDate, // Add due date
-            dueDateType // Add due date type
+            dueDateType, // Add due date type
+            hashtags // Add hashtags
           })
         );
         toast.success('Task added successfully');
@@ -104,14 +108,16 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
           todo.title !== title || 
           todo.status !== status || 
           todo.dueDate !== dueDate || 
-          todo.dueDateType !== dueDateType
+          todo.dueDateType !== dueDateType ||
+          todo.hashtags !== hashtags
         ) {
           dispatch(updateTodo({ 
             ...todo, 
             title, 
             status, 
             dueDate,
-            dueDateType 
+            dueDateType,
+            hashtags 
           }));
           toast.success('Task Updated successfully');
         } else {
@@ -190,6 +196,16 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   />
                 </label>
               )}
+              <label htmlFor="hashtags">
+                Hashtags
+                <input
+                  type="text"
+                  id="hashtags"
+                  value={hashtags}
+                  onChange={(e) => setHashtags(e.target.value)}
+                  placeholder="e.g. #work #urgent #meeting (separate with spaces)"
+                />
+              </label>
               {type === 'update' && (
                 <label htmlFor="type">
                   Status
