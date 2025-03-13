@@ -8,13 +8,6 @@ A complete todo application with all features.
 
 **Watch On Youtube: [https://youtu.be/W0Uf_xu350k](https://youtu.be/W0Uf_xu350k)**
 
----
-
-### Made with ❤️ by [Shaif Arfan](https://www.instagram.com/shaifarfan08/)
-
-Like my works and want to support me?
-
-<a href="https://www.buymeacoffee.com/shaifarfan08" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 162.75px !important;" ></a>
 
 ---
 
