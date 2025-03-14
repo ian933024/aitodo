@@ -13,6 +13,7 @@
   flex-direction: column;
   transition: transform 0.3s ease;
   z-index: 1000;
+  height: 100vh; /* Ensure full height for scrolling */
 
   &.closed {
     transform: translateX(-100%);
@@ -36,10 +37,11 @@
       }
     }
   }
+
 }
 
 .toggleButton {
-  position: absolute;
+  position: fixed;
   right: 10px;
   top: 10px;
   width: 32px;
@@ -54,9 +56,38 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 1001; /* Ensure button is above sidebar content */
 
   &:hover {
     background-color: var(--black-1);
+  }
+}
+
+.sidebarContent {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  padding-top: 3rem;
+
+  /* Custom scrollbar styles */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bg-2);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--gray-1);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--primaryPurple);
   }
 }
 

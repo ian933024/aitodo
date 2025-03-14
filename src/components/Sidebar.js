@@ -149,189 +149,191 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
         >
           {sidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
         </button>
-
-        <div className={styles.sidebarHeader}>
-          <h1 className={styles.sidebarTitle}>
-            <span className={styles.todoIcon}>📝</span> ToDoApp
-          </h1>
-          {currentUser && (
-            <div className={styles.userInfo}>
-              <FaUser className={styles.userIcon} />
-              <span className={styles.username}>{currentUser}</span>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.sidebarSection}>
-          <h3 className={styles.sectionTitle}>Main</h3>
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              dueDateFilter === 'all' && filterStatus === 'all'
-                ? styles.active
-                : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              handleFilterByDate('all');
-              handleFilterByStatus('all');
-            }}
-          >
-            <FaHome className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>All Tasks</span>
-            <span className={styles.count}>{counts.all}</span>
-          </motion.button>
-
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              dueDateFilter === 'today' ? styles.active : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFilterByDate('today')}
-          >
-            <FaCalendarDay className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>Today</span>
-            <span className={styles.count}>{counts.today}</span>
-          </motion.button>
-
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              dueDateFilter === 'this-week' ? styles.active : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFilterByDate('this-week')}
-          >
-            <FaCalendarWeek className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>This Week</span>
-            <span className={styles.count}>{counts.thisWeek}</span>
-          </motion.button>
-
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              dueDateFilter === 'next-week' ? styles.active : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFilterByDate('next-week')}
-          >
-            <FaCalendarWeek className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>Next Week</span>
-            <span className={styles.count}>
-              {
-                todoList.filter((todo) => {
-                  if (!todo.dueDate) return false;
-                  return isNextWeekOnly(todo.dueDate);
-                }).length
-              }
-            </span>
-          </motion.button>
-
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              dueDateFilter === 'further' ? styles.active : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFilterByDate('further')}
-          >
-            <FaCalendarDay className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>Future</span>
-            <span className={styles.count}>
-              {
-                todoList.filter((todo) => {
-                  if (!todo.dueDate) return false;
-                  return isFurther(todo.dueDate);
-                }).length
-              }
-            </span>
-          </motion.button>
-        </div>
-
-        <div className={styles.sidebarSection}>
-          <h3 className={styles.sectionTitle}>Status</h3>
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              filterStatus === 'incomplete' ? styles.active : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFilterByStatus('incomplete')}
-          >
-            <FaCheckCircle className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>Incomplete</span>
-            <span className={styles.count}>
-              {todoList.filter((todo) => todo.status === 'incomplete').length}
-            </span>
-          </motion.button>
-
-          <motion.button
-            className={`${styles.sidebarButton} ${
-              filterStatus === 'complete' ? styles.active : ''
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleFilterByStatus('complete')}
-          >
-            <FaCheckCircle className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>Completed</span>
-            <span className={styles.count}>{counts.completed}</span>
-          </motion.button>
-        </div>
-
-        {uniqueHashtags.length > 0 && (
-          <div className={styles.sidebarSection}>
-            <h3 className={styles.sectionTitle}>Hashtags</h3>
-            {uniqueHashtags.map((tag, index) => (
-              <motion.button
-                key={index}
-                className={`${styles.sidebarButton} ${
-                  hashtagFilter === tag ? styles.active : ''
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleFilterByHashtag(tag)}
-              >
-                <FaHashtag className={styles.sidebarIcon} />
-                <span className={styles.buttonText}>{tag}</span>
-                <span className={styles.count}>
-                  {
-                    todoList.filter(
-                      (todo) => todo.hashtags && todo.hashtags.includes(tag)
-                    ).length
-                  }
-                </span>
-              </motion.button>
-            ))}
+        
+        <div className={styles.sidebarContent}>
+          <div className={styles.sidebarHeader}>
+            <h1 className={styles.sidebarTitle}>
+              <span className={styles.todoIcon}>📝</span> ToDoApp
+            </h1>
+            {currentUser && (
+              <div className={styles.userInfo}>
+                <FaUser className={styles.userIcon} />
+                <span className={styles.username}>{currentUser}</span>
+              </div>
+            )}
           </div>
-        )}
 
-        <div className={styles.sidebarBottom}>
-          <motion.button
-            className={styles.addTaskButton}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setModalOpen(true)}
-          >
-            <FaPlus className={styles.sidebarIcon} />
-            <span className={styles.buttonText}>Add New Task</span>
-          </motion.button>
-
-          {onLogout && (
+          <div className={styles.sidebarSection}>
+            <h3 className={styles.sectionTitle}>Main</h3>
             <motion.button
-              className={styles.logoutButton}
+              className={`${styles.sidebarButton} ${
+                dueDateFilter === 'all' && filterStatus === 'all'
+                  ? styles.active
+                  : ''
+              }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={onLogout}
+              onClick={() => {
+                handleFilterByDate('all');
+                handleFilterByStatus('all');
+              }}
             >
-              <FaSignOutAlt className={styles.sidebarIcon} />
-              <span className={styles.buttonText}>Logout</span>
+              <FaHome className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>All Tasks</span>
+              <span className={styles.count}>{counts.all}</span>
             </motion.button>
+
+            <motion.button
+              className={`${styles.sidebarButton} ${
+                dueDateFilter === 'today' ? styles.active : ''
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleFilterByDate('today')}
+            >
+              <FaCalendarDay className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Today</span>
+              <span className={styles.count}>{counts.today}</span>
+            </motion.button>
+
+            <motion.button
+              className={`${styles.sidebarButton} ${
+                dueDateFilter === 'this-week' ? styles.active : ''
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleFilterByDate('this-week')}
+            >
+              <FaCalendarWeek className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>This Week</span>
+              <span className={styles.count}>{counts.thisWeek}</span>
+            </motion.button>
+
+            <motion.button
+              className={`${styles.sidebarButton} ${
+                dueDateFilter === 'next-week' ? styles.active : ''
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleFilterByDate('next-week')}
+            >
+              <FaCalendarWeek className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Next Week</span>
+              <span className={styles.count}>
+                {
+                  todoList.filter((todo) => {
+                    if (!todo.dueDate) return false;
+                    return isNextWeekOnly(todo.dueDate);
+                  }).length
+                }
+              </span>
+            </motion.button>
+
+            <motion.button
+              className={`${styles.sidebarButton} ${
+                dueDateFilter === 'further' ? styles.active : ''
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleFilterByDate('further')}
+            >
+              <FaCalendarDay className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Future</span>
+              <span className={styles.count}>
+                {
+                  todoList.filter((todo) => {
+                    if (!todo.dueDate) return false;
+                    return isFurther(todo.dueDate);
+                  }).length
+                }
+              </span>
+            </motion.button>
+          </div>
+
+          <div className={styles.sidebarSection}>
+            <h3 className={styles.sectionTitle}>Status</h3>
+            <motion.button
+              className={`${styles.sidebarButton} ${
+                filterStatus === 'incomplete' ? styles.active : ''
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleFilterByStatus('incomplete')}
+            >
+              <FaCheckCircle className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Incomplete</span>
+              <span className={styles.count}>
+                {todoList.filter((todo) => todo.status === 'incomplete').length}
+              </span>
+            </motion.button>
+
+            <motion.button
+              className={`${styles.sidebarButton} ${
+                filterStatus === 'complete' ? styles.active : ''
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleFilterByStatus('complete')}
+            >
+              <FaCheckCircle className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Completed</span>
+              <span className={styles.count}>{counts.completed}</span>
+            </motion.button>
+          </div>
+
+          {uniqueHashtags.length > 0 && (
+            <div className={styles.sidebarSection}>
+              <h3 className={styles.sectionTitle}>Hashtags</h3>
+              {uniqueHashtags.map((tag, index) => (
+                <motion.button
+                  key={index}
+                  className={`${styles.sidebarButton} ${
+                    hashtagFilter === tag ? styles.active : ''
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleFilterByHashtag(tag)}
+                >
+                  <FaHashtag className={styles.sidebarIcon} />
+                  <span className={styles.buttonText}>{tag}</span>
+                  <span className={styles.count}>
+                    {
+                      todoList.filter(
+                        (todo) => todo.hashtags && todo.hashtags.includes(tag)
+                      ).length
+                    }
+                  </span>
+                </motion.button>
+              ))}
+            </div>
           )}
 
-          <div className={styles.copyright}>
-            &copy; {new Date().getFullYear()} TodoApp
+          <div className={styles.sidebarBottom}>
+            <motion.button
+              className={styles.addTaskButton}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setModalOpen(true)}
+            >
+              <FaPlus className={styles.sidebarIcon} />
+              <span className={styles.buttonText}>Add New Task</span>
+            </motion.button>
+
+            {onLogout && (
+              <motion.button
+                className={styles.logoutButton}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onLogout}
+              >
+                <FaSignOutAlt className={styles.sidebarIcon} />
+                <span className={styles.buttonText}>Logout</span>
+              </motion.button>
+            )}
+
+            <div className={styles.copyright}>
+              &copy; {new Date().getFullYear()} TodoApp
+            </div>
           </div>
         </div>
       </div>
