@@ -1,16 +1,16 @@
-import { format, addWeeks } from 'date-fns';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import React, { useEffect, useState } from 'react';
-import { MdDelete, MdEdit } from 'react-icons/md';
-import { BsCalendarPlus, BsCalendarX } from 'react-icons/bs';
-import { FaCalendarDay, FaCalendarWeek, FaHashtag } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
-import { removeTodo, editTodo } from '../slices/todoSlice';
-import styles from '../styles/modules/todoItem.module.scss';
-import { getClasses } from '../utils/getClasses';
-import CheckButton from './CheckButton';
-import TodoModal from './TodoModal';
+import { format, addWeeks } from "date-fns";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import React, { useEffect, useState } from "react";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { BsCalendarPlus, BsCalendarX } from "react-icons/bs";
+import { FaCalendarDay, FaCalendarWeek, FaHashtag } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { removeTodo, editTodo } from "../slices/todoSlice";
+import styles from "../styles/modules/todoItem.module.scss";
+import { getClasses } from "../utils/getClasses";
+import CheckButton from "./CheckButton";
+import TodoModal from "./TodoModal";
 
 const child = {
   hidden: { y: 20, opacity: 0 },
@@ -25,10 +25,10 @@ function TodoItem({ todo }) {
   const [checked, setChecked] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [quickHashtagOpen, setQuickHashtagOpen] = useState(false);
-  const [newHashtag, setNewHashtag] = useState('');
+  const [newHashtag, setNewHashtag] = useState("");
 
   useEffect(() => {
-    if (todo.status === 'complete') {
+    if (todo.status === "complete") {
       setChecked(true);
     } else {
       setChecked(false);
@@ -39,7 +39,7 @@ function TodoItem({ todo }) {
     setChecked(!checked);
     const updatedTodo = {
       ...todo,
-      status: checked ? 'incomplete' : 'complete',
+      status: checked ? "incomplete" : "complete",
     };
     dispatch(editTodo(updatedTodo))
       .unwrap()
@@ -56,7 +56,7 @@ function TodoItem({ todo }) {
     dispatch(removeTodo(todo.id))
       .unwrap()
       .then(() => {
-        toast.success('Todo Deleted Successfully');
+        toast.success("Todo Deleted Successfully");
       })
       .catch((error) => {
         toast.error(`Failed to delete todo: ${error.message}`);
@@ -72,10 +72,10 @@ function TodoItem({ todo }) {
     if (todo.dueDate) {
       const [newDateString] = addWeeks(new Date(todo.dueDate), 1)
         .toISOString()
-        .split('T');
+        .split("T");
       newDueDate = newDateString;
     } else {
-      const [newDateString] = addWeeks(new Date(), 1).toISOString().split('T');
+      const [newDateString] = addWeeks(new Date(), 1).toISOString().split("T");
       newDueDate = newDateString;
     }
 
@@ -83,7 +83,7 @@ function TodoItem({ todo }) {
     dispatch(editTodo(updatedTodo))
       .unwrap()
       .then(() => {
-        toast.success('Due date moved to next week');
+        toast.success("Due date moved to next week");
       })
       .catch((error) => {
         toast.error(`Failed to update due date: ${error.message}`);
@@ -95,10 +95,10 @@ function TodoItem({ todo }) {
     if (todo.dueDate) {
       const [newDateString] = addWeeks(new Date(todo.dueDate), 2)
         .toISOString()
-        .split('T');
+        .split("T");
       newDueDate = newDateString;
     } else {
-      const [newDateString] = addWeeks(new Date(), 2).toISOString().split('T');
+      const [newDateString] = addWeeks(new Date(), 2).toISOString().split("T");
       newDueDate = newDateString;
     }
 
@@ -106,7 +106,7 @@ function TodoItem({ todo }) {
     dispatch(editTodo(updatedTodo))
       .unwrap()
       .then(() => {
-        toast.success('Due date moved to two weeks later');
+        toast.success("Due date moved to two weeks later");
       })
       .catch((error) => {
         toast.error(`Failed to update due date: ${error.message}`);
@@ -114,13 +114,13 @@ function TodoItem({ todo }) {
   };
 
   const handleSetDueToday = () => {
-    const newDueDate = new Date().toISOString().split('T')[0];
+    const newDueDate = new Date().toISOString().split("T")[0];
     const updatedTodo = { ...todo, dueDate: newDueDate };
 
     dispatch(editTodo(updatedTodo))
       .unwrap()
       .then(() => {
-        toast.success('Due date set to today');
+        toast.success("Due date set to today");
       })
       .catch((error) => {
         toast.error(`Failed to update due date: ${error.message}`);
@@ -133,7 +133,7 @@ function TodoItem({ todo }) {
     dispatch(editTodo(updatedTodo))
       .unwrap()
       .then(() => {
-        toast.success('Due date cancelled');
+        toast.success("Due date cancelled");
       })
       .catch((error) => {
         toast.error(`Failed to cancel due date: ${error.message}`);
@@ -147,25 +147,25 @@ function TodoItem({ todo }) {
 
   const handleQuickAddHashtag = () => {
     setQuickHashtagOpen(!quickHashtagOpen);
-    setNewHashtag('');
+    setNewHashtag("");
   };
 
   const handleAddNewHashtag = (e) => {
     e.preventDefault();
     if (!newHashtag.trim()) {
-      toast.error('Please enter a hashtag');
+      toast.error("Please enter a hashtag");
       return;
     }
 
     let tag = newHashtag.trim();
-    if (!tag.startsWith('#')) {
+    if (!tag.startsWith("#")) {
       tag = `#${tag}`;
     }
 
     // Ensure no spaces in the hashtag
-    tag = tag.replace(/\s+/g, '');
+    tag = tag.replace(/\s+/g, "");
 
-    const currentTags = todo.hashtags ? todo.hashtags.trim() : '';
+    const currentTags = todo.hashtags ? todo.hashtags.trim() : "";
     const updatedHashtags = currentTags ? `${currentTags} ${tag}` : tag;
 
     const updatedTodo = { ...todo, hashtags: updatedHashtags };
@@ -175,7 +175,7 @@ function TodoItem({ todo }) {
       .then(() => {
         toast.success(`Added hashtag: ${tag}`);
         setQuickHashtagOpen(false);
-        setNewHashtag('');
+        setNewHashtag("");
       })
       .catch((error) => {
         toast.error(`Failed to add hashtag: ${error.message}`);
@@ -191,7 +191,7 @@ function TodoItem({ todo }) {
             <p
               className={getClasses([
                 styles.todoText,
-                todo.status === 'complete' && styles['todoText--completed'],
+                todo.status === "complete" && styles["todoText--completed"],
               ])}
             >
               {todo.title}
@@ -199,14 +199,14 @@ function TodoItem({ todo }) {
             <p className={styles.time}>
               {todo.dueDate && (
                 <span className={styles.dueDate}>
-                  Due: {format(new Date(todo.dueDate), 'MM/dd/yyyy')}
+                  Due: {format(new Date(todo.dueDate), "MM/dd/yyyy")}
                 </span>
               )}
               {!todo.dueDate && (
                 <span className={styles.noDueDate}>No due date</span>
               )}
             </p>
-            {todo.hashtags && todo.hashtags.trim() !== '' && (
+            {todo.hashtags && todo.hashtags.trim() !== "" && (
               <p className={styles.hashtags}>
                 {todo.hashtags.split(/\s+/).map((tag, index) => (
                   <span
@@ -214,12 +214,12 @@ function TodoItem({ todo }) {
                     className={styles.hashtag}
                     onClick={() => handleHashtagClick(tag)}
                     onKeyDown={(e) =>
-                      e.key === 'Enter' && handleHashtagClick(tag)
+                      e.key === "Enter" && handleHashtagClick(tag)
                     }
                     role="button"
                     tabIndex={0}
                   >
-                    {tag.startsWith('#') ? tag : `#${tag}`}
+                    {tag.startsWith("#") ? tag : `#${tag}`}
                   </span>
                 ))}
               </p>

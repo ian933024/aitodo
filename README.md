@@ -4,9 +4,7 @@
 
 A complete todo application with all features.
 
-**live demo: not availible currently
-
-
+\*\*live demo: not availible currently
 
 ---
 

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { isAfter, endOfWeek, addDays, parseISO } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import { isAfter, endOfWeek, addDays, parseISO } from "date-fns";
 import {
   FaHome,
   FaCalendarDay,
@@ -13,18 +13,27 @@ import {
   FaChevronRight,
   FaSignOutAlt,
   FaUser,
-} from 'react-icons/fa';
+  FaUserCog,
+} from "react-icons/fa";
 import {
   updateFilterStatus,
   updateDueDateFilter,
   updateHashtagFilter,
-} from '../slices/todoSlice';
-import TodoModal from './TodoModal';
-import styles from '../styles/modules/sidebar.module.scss';
+} from "../slices/todoSlice";
+import TodoModal from "./TodoModal";
+import UserProfile from "./UserProfile";
+import styles from "../styles/modules/sidebar.module.scss";
 
-function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
+function Sidebar({
+  onSidebarToggle,
+  onLogout,
+  currentUser,
+  userId,
+  onUsernameChange,
+}) {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const todoList = useSelector((state) => state.todo.todoList);
   const filterStatus = useSelector((state) => state.todo.filterStatus);
   const dueDateFilter = useSelector((state) => state.todo.dueDateFilter);
@@ -40,7 +49,7 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
         const tags = todo.hashtags.split(/\s+/);
         tags.forEach((tag) => {
           if (tag) {
-            hashtagSet.add(tag.startsWith('#') ? tag : `#${tag}`);
+            hashtagSet.add(tag.startsWith("#") ? tag : `#${tag}`);
           }
         });
       }
@@ -69,7 +78,7 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
 
     todoList.forEach((todo) => {
       // Count completed tasks
-      if (todo.status === 'complete') {
+      if (todo.status === "complete") {
         taskCounts.completed += 1;
       }
 
@@ -103,7 +112,7 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
   const handleFilterByHashtag = (hashtag) => {
     if (hashtagFilter === hashtag) {
       // Clear filter if clicked again
-      dispatch(updateHashtagFilter(''));
+      dispatch(updateHashtagFilter(""));
     } else {
       dispatch(updateHashtagFilter(hashtag));
     }
@@ -140,25 +149,35 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
 
   return (
     <>
-      <div className={`${styles.sidebar} ${sidebarOpen ? '' : styles.closed}`}>
+      <div className={`${styles.sidebar} ${sidebarOpen ? "" : styles.closed}`}>
         <button
           type="button"
           className={styles.toggleButton}
           onClick={toggleSidebar}
-          aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
         >
           {sidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
         </button>
-        
         <div className={styles.sidebarContent}>
           <div className={styles.sidebarHeader}>
             <h1 className={styles.sidebarTitle}>
               <span className={styles.todoIcon}>📝</span> ToDoApp
             </h1>
             {currentUser && (
-              <div className={styles.userInfo}>
+              <div
+                className={styles.userInfo}
+                onClick={() => setProfileOpen(true)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setProfileOpen(true);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+              >
                 <FaUser className={styles.userIcon} />
                 <span className={styles.username}>{currentUser}</span>
+                <FaUserCog className={styles.settingsIcon} />
               </div>
             )}
           </div>
@@ -167,15 +186,15 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <h3 className={styles.sectionTitle}>Main</h3>
             <motion.button
               className={`${styles.sidebarButton} ${
-                dueDateFilter === 'all' && filterStatus === 'all'
+                dueDateFilter === "all" && filterStatus === "all"
                   ? styles.active
-                  : ''
+                  : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                handleFilterByDate('all');
-                handleFilterByStatus('all');
+                handleFilterByDate("all");
+                handleFilterByStatus("all");
               }}
             >
               <FaHome className={styles.sidebarIcon} />
@@ -185,11 +204,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
 
             <motion.button
               className={`${styles.sidebarButton} ${
-                dueDateFilter === 'today' ? styles.active : ''
+                dueDateFilter === "today" ? styles.active : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleFilterByDate('today')}
+              onClick={() => handleFilterByDate("today")}
             >
               <FaCalendarDay className={styles.sidebarIcon} />
               <span className={styles.buttonText}>Today</span>
@@ -198,11 +217,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
 
             <motion.button
               className={`${styles.sidebarButton} ${
-                dueDateFilter === 'this-week' ? styles.active : ''
+                dueDateFilter === "this-week" ? styles.active : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleFilterByDate('this-week')}
+              onClick={() => handleFilterByDate("this-week")}
             >
               <FaCalendarWeek className={styles.sidebarIcon} />
               <span className={styles.buttonText}>This Week</span>
@@ -211,11 +230,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
 
             <motion.button
               className={`${styles.sidebarButton} ${
-                dueDateFilter === 'next-week' ? styles.active : ''
+                dueDateFilter === "next-week" ? styles.active : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleFilterByDate('next-week')}
+              onClick={() => handleFilterByDate("next-week")}
             >
               <FaCalendarWeek className={styles.sidebarIcon} />
               <span className={styles.buttonText}>Next Week</span>
@@ -231,11 +250,11 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
 
             <motion.button
               className={`${styles.sidebarButton} ${
-                dueDateFilter === 'further' ? styles.active : ''
+                dueDateFilter === "further" ? styles.active : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleFilterByDate('further')}
+              onClick={() => handleFilterByDate("further")}
             >
               <FaCalendarDay className={styles.sidebarIcon} />
               <span className={styles.buttonText}>Future</span>
@@ -254,26 +273,26 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
             <h3 className={styles.sectionTitle}>Status</h3>
             <motion.button
               className={`${styles.sidebarButton} ${
-                filterStatus === 'incomplete' ? styles.active : ''
+                filterStatus === "incomplete" ? styles.active : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleFilterByStatus('incomplete')}
+              onClick={() => handleFilterByStatus("incomplete")}
             >
               <FaCheckCircle className={styles.sidebarIcon} />
               <span className={styles.buttonText}>Incomplete</span>
               <span className={styles.count}>
-                {todoList.filter((todo) => todo.status === 'incomplete').length}
+                {todoList.filter((todo) => todo.status === "incomplete").length}
               </span>
             </motion.button>
 
             <motion.button
               className={`${styles.sidebarButton} ${
-                filterStatus === 'complete' ? styles.active : ''
+                filterStatus === "complete" ? styles.active : ""
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleFilterByStatus('complete')}
+              onClick={() => handleFilterByStatus("complete")}
             >
               <FaCheckCircle className={styles.sidebarIcon} />
               <span className={styles.buttonText}>Completed</span>
@@ -288,7 +307,7 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
                 <motion.button
                   key={index}
                   className={`${styles.sidebarButton} ${
-                    hashtagFilter === tag ? styles.active : ''
+                    hashtagFilter === tag ? styles.active : ""
                   }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -338,6 +357,14 @@ function Sidebar({ onSidebarToggle, onLogout, currentUser }) {
         </div>
       </div>
       <TodoModal type="add" modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      {profileOpen && (
+        <UserProfile
+          currentUser={currentUser}
+          userId={userId}
+          onUsernameChange={onUsernameChange}
+          onClose={() => setProfileOpen(false)}
+        />
+      )}
     </>
   );
 }

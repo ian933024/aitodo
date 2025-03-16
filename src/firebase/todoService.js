@@ -7,20 +7,20 @@ import {
   getDocs,
   query,
   where,
-} from 'firebase/firestore';
-import { db } from './config';
+} from "firebase/firestore";
+import { db } from "./config";
 
 // Collection reference
-const todosCollectionRef = collection(db, 'todos');
+const todosCollectionRef = collection(db, "todos");
 
 // Get todos for specific user
 export const getTodos = async (username) => {
   try {
     if (!username) {
-      console.warn('No username provided to getTodos');
+      console.warn("No username provided to getTodos");
       return [];
     }
-    const q = query(todosCollectionRef, where('user', '==', username));
+    const q = query(todosCollectionRef, where("user", "==", username));
     const querySnapshot = await getDocs(q);
     const todos = [];
     querySnapshot.forEach((docSnapshot) => {
@@ -28,7 +28,22 @@ export const getTodos = async (username) => {
     });
     return todos;
   } catch (error) {
-    console.error('Error getting todos:', error);
+    console.error("Error getting todos:", error);
+    throw error;
+  }
+};
+
+// Get count of todos for specific user (for admin)
+export const getTodoCount = async (username) => {
+  try {
+    if (!username) {
+      return 0;
+    }
+    const q = query(todosCollectionRef, where("user", "==", username));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.size;
+  } catch (error) {
+    console.error("Error getting todo count:", error);
     throw error;
   }
 };
@@ -37,11 +52,11 @@ export const getTodos = async (username) => {
 export const addTodo = async (todo) => {
   try {
     if (!todo.user) {
-      throw new Error('Todo must have a user property');
+      throw new Error("Todo must have a user property");
     }
     return await addDoc(todosCollectionRef, todo);
   } catch (error) {
-    console.error('Error adding todo:', error);
+    console.error("Error adding todo:", error);
     throw error;
   }
 };
@@ -50,14 +65,14 @@ export const addTodo = async (todo) => {
 export const updateTodo = async (id, updatedTodo) => {
   try {
     if (!id) {
-      throw new Error('Todo ID is required for updates');
+      throw new Error("Todo ID is required for updates");
     }
     // Remove id from the data being sent to Firestore to avoid duplicate ID issues
     const { id: todoId, ...dataToUpdate } = updatedTodo;
-    const todoDoc = doc(db, 'todos', id);
+    const todoDoc = doc(db, "todos", id);
     return await updateDoc(todoDoc, dataToUpdate);
   } catch (error) {
-    console.error('Error updating todo:', error);
+    console.error("Error updating todo:", error);
     throw error;
   }
 };
@@ -66,12 +81,12 @@ export const updateTodo = async (id, updatedTodo) => {
 export const deleteTodo = async (id) => {
   try {
     if (!id) {
-      throw new Error('Todo ID is required for deletion');
+      throw new Error("Todo ID is required for deletion");
     }
-    const todoDoc = doc(db, 'todos', id);
+    const todoDoc = doc(db, "todos", id);
     return await deleteDoc(todoDoc);
   } catch (error) {
-    console.error('Error deleting todo:', error);
+    console.error("Error deleting todo:", error);
     throw error;
   }
 };

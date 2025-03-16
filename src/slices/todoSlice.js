@@ -1,14 +1,14 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   getTodos,
   addTodo as fbAddTodo,
   updateTodo as fbUpdateTodo,
   deleteTodo as fbDeleteTodo,
-} from '../firebase/todoService';
+} from "../firebase/todoService";
 
 // Async thunks for Firestore operations
 export const fetchTodos = createAsyncThunk(
-  'todos/fetchTodos',
+  "todos/fetchTodos",
   async (username) => {
     if (!username) return [];
     const response = await getTodos(username);
@@ -16,33 +16,33 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
-export const createTodo = createAsyncThunk('todos/createTodo', async (todo) => {
+export const createTodo = createAsyncThunk("todos/createTodo", async (todo) => {
   const docRef = await fbAddTodo(todo);
   return { id: docRef.id, ...todo };
 });
 
-export const editTodo = createAsyncThunk('todos/editTodo', async (todo) => {
+export const editTodo = createAsyncThunk("todos/editTodo", async (todo) => {
   await fbUpdateTodo(todo.id, todo);
   return todo;
 });
 
-export const removeTodo = createAsyncThunk('todos/removeTodo', async (id) => {
+export const removeTodo = createAsyncThunk("todos/removeTodo", async (id) => {
   await fbDeleteTodo(id);
   return id;
 });
 
 const initialValue = {
-  filterStatus: 'all',
-  dueDateFilter: 'all',
-  hashtagFilter: '',
+  filterStatus: "all",
+  dueDateFilter: "all",
+  hashtagFilter: "",
   todoList: [],
-  currentUser: '',
+  currentUser: "",
   loading: false,
   error: null,
 };
 
 export const todoSlice = createSlice({
-  name: 'todo',
+  name: "todo",
   initialState: initialValue,
   reducers: {
     setCurrentUser: (state, action) => {

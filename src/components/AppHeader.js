@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Button from './Button';
-import styles from '../styles/modules/app.module.scss';
-import TodoModal from './TodoModal';
+import React, { useState } from "react";
+import Button from "./Button";
+import styles from "../styles/modules/app.module.scss";
+import TodoModal from "./TodoModal";
 
 function AppHeader() {
   const [modalOpen, setModalOpen] = useState(false);

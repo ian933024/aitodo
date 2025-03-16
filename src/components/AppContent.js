@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
   isToday,
   parseISO,
@@ -8,9 +8,9 @@ import {
   isAfter,
   endOfWeek,
   addDays,
-} from 'date-fns';
-import styles from '../styles/modules/app.module.scss';
-import TodoItem from './TodoItem';
+} from "date-fns";
+import styles from "../styles/modules/app.module.scss";
+import TodoItem from "./TodoItem";
 
 const container = {
   hidden: { opacity: 1 },
@@ -58,11 +58,20 @@ function AppContent() {
   };
 
   const sortedTodoList = [...todoList];
-  sortedTodoList.sort((a, b) => new Date(b.time) - new Date(a.time));
+  sortedTodoList.sort((a, b) => {
+    // If either item has no due date, put it at the end
+    if (!a.dueDate && !b.dueDate) {
+      return new Date(b.time) - new Date(a.time); // Fall back to creation time
+    }
+    if (!a.dueDate) return 1; // a has no due date, push to end
+    if (!b.dueDate) return -1; // b has no due date, push to end
+    // Sort by due date from nearest to furthest
+    return new Date(a.dueDate) - new Date(b.dueDate);
+  });
 
   // First filter by status
   const statusFilteredList = sortedTodoList.filter((item) => {
-    if (filterStatus === 'all') {
+    if (filterStatus === "all") {
       return true;
     }
     return item.status === filterStatus;
@@ -71,7 +80,7 @@ function AppContent() {
   // Then filter by due date
   const dueDateFilteredList = statusFilteredList.filter((item) => {
     // All due dates
-    if (dueDateFilter === 'all') {
+    if (dueDateFilter === "all") {
       return true;
     }
 
@@ -81,22 +90,22 @@ function AppContent() {
     }
 
     // Tasks due today
-    if (dueDateFilter === 'today') {
+    if (dueDateFilter === "today") {
       return isToday(parseISO(item.dueDate));
     }
 
     // Tasks due this week
-    if (dueDateFilter === 'this-week') {
+    if (dueDateFilter === "this-week") {
       return isThisWeek(parseISO(item.dueDate));
     }
 
     // Tasks due next week (including tasks from this week)
-    if (dueDateFilter === 'next-week') {
+    if (dueDateFilter === "next-week") {
       return isThisWeek(parseISO(item.dueDate)) || isNextWeekOnly(item.dueDate);
     }
 
     // Tasks due further than next week
-    if (dueDateFilter === 'further') {
+    if (dueDateFilter === "further") {
       return isFurther(item.dueDate);
     }
 

@@ -65,6 +65,27 @@
       border-color: var(--primaryPurple);
       outline: none;
     }
+
+    &[type="password"] {
+      padding-right: 6rem; // Extra padding for the show/hide button
+    }
+  }
+
+  .passwordToggle {
+    position: absolute;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--black-2);
+    font-size: 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--primaryPurple);
+    }
   }
 }
 
@@ -120,9 +141,17 @@
   h3 {
     font-size: 1.6rem;
     color: var(--black-1);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     font-weight: 500;
     text-align: center;
+  }
+
+  .userListHint {
+    font-size: 1.3rem;
+    color: var(--black-2);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-style: italic;
   }
 }
 
@@ -154,4 +183,169 @@
 
 .userIcon {
   font-size: 1.4rem;
+}
+
+// User Profile Styles
+.profileContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+  padding: 2rem;
+}
+
+.profileCard {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+
+  @include smallDeviceSize {
+    padding: 2rem;
+  }
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profileTitle {
+  font-size: 2.4rem;
+  color: var(--black-1);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.profileSubtitle {
+  font-size: 1.4rem;
+  color: var(--black-2);
+  margin-bottom: 1rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--black-2);
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--primaryPurple);
+  }
+}
+
+.profileTabs {
+  display: flex;
+  border-bottom: 1px solid var(--gray-2);
+  margin-bottom: 2rem;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.6rem;
+  color: var(--black-2);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--primaryPurple);
+  }
+
+  &.activeTab {
+    color: var(--primaryPurple);
+    font-weight: 500;
+
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primaryPurple);
+    }
+  }
+}
+
+.currentValue {
+  background-color: var(--bg-2);
+  padding: 1.2rem;
+  border-radius: 6px;
+  font-size: 1.6rem;
+  color: var(--black-1);
+  font-weight: 500;
+}
+
+.updateButton {
+  background-color: var(--primaryPurple);
+  color: var(--white);
+  border: none;
+  padding: 1.2rem;
+  border-radius: 6px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+
+  &:hover {
+    background-color: darken(#646ff0, 10%);
+  }
+
+  &:disabled {
+    background-color: var(--gray-2);
+    cursor: not-allowed;
+  }
+}
+
+.passwordMatch {
+  margin-top: 0.5rem;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.passwordMatchSuccess {
+  color: green;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.passwordMatchError {
+  color: red;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optionalField {
+  font-size: 1.2rem;
+  color: var(--black-2);
+  font-weight: normal;
+  font-style: italic;
+}
+
+.emailHint {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--black-2);
+  margin-top: 0.5rem;
+  font-style: italic;
 }
