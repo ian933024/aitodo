@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Toaster } from "react-hot-toast";
-import AppContent from "./components/AppContent";
-import AppHeader from "./components/AppHeader";
-import Sidebar from "./components/Sidebar";
-import PageTitle from "./components/PageTitle";
-import Login from "./components/Login";
-import AdminPanel from "./components/AdminPanel";
-import styles from "./styles/modules/app.module.scss";
-import { setCurrentUser, fetchTodos } from "./slices/todoSlice";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Toaster } from 'react-hot-toast';
+import AppContent from './components/AppContent';
+import AppHeader from './components/AppHeader';
+import Sidebar from './components/Sidebar';
+import PageTitle from './components/PageTitle';
+import Login from './components/Login';
+import AdminPanel from './components/AdminPanel';
+import styles from './styles/modules/app.module.scss';
+import { setCurrentUser, fetchTodos } from './slices/todoSlice';
 
 function App() {
   const dispatch = useDispatch();
@@ -16,15 +16,15 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [currentUser, setCurrentUsername] = useState("");
-  const [userId, setUserId] = useState("");
+  const [currentUser, setCurrentUsername] = useState('');
+  const [userId, setUserId] = useState('');
   const [appLoading, setAppLoading] = useState(false);
 
   // Check if user is already logged in
   useEffect(() => {
-    const savedUser = localStorage.getItem("currentTodoUser");
-    const savedUserId = localStorage.getItem("currentTodoUserId");
-    const savedIsAdmin = localStorage.getItem("isAdmin") === "true";
+    const savedUser = localStorage.getItem('currentTodoUser');
+    const savedUserId = localStorage.getItem('currentTodoUserId');
+    const savedIsAdmin = localStorage.getItem('isAdmin') === 'true';
 
     if (savedUser) {
       setAppLoading(true);
@@ -40,10 +40,10 @@ function App() {
         dispatch(fetchTodos(savedUser))
           .unwrap()
           .then(() => {
-            console.log("Todos loaded successfully");
+            console.log('Todos loaded successfully');
           })
           .catch((error) => {
-            console.error("Error loading todos:", error);
+            console.error('Error loading todos:', error);
           })
           .finally(() => {
             setAppLoading(false);
@@ -65,9 +65,9 @@ function App() {
     setUserId(id);
     setIsAdmin(adminFlag);
 
-    localStorage.setItem("currentTodoUser", username);
-    localStorage.setItem("currentTodoUserId", id);
-    localStorage.setItem("isAdmin", adminFlag.toString());
+    localStorage.setItem('currentTodoUser', username);
+    localStorage.setItem('currentTodoUserId', id);
+    localStorage.setItem('isAdmin', adminFlag.toString());
 
     if (!adminFlag) {
       dispatch(setCurrentUser(username));
@@ -76,10 +76,10 @@ function App() {
       dispatch(fetchTodos(username))
         .unwrap()
         .then(() => {
-          console.log("Todos loaded successfully");
+          console.log('Todos loaded successfully');
         })
         .catch((error) => {
-          console.error("Error loading todos:", error);
+          console.error('Error loading todos:', error);
         })
         .finally(() => {
           setAppLoading(false);
@@ -91,25 +91,25 @@ function App() {
 
   const handleUsernameChange = (newUsername) => {
     setCurrentUsername(newUsername);
-    localStorage.setItem("currentTodoUser", newUsername);
+    localStorage.setItem('currentTodoUser', newUsername);
     dispatch(setCurrentUser(newUsername));
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setCurrentUsername("");
-    setUserId("");
+    setCurrentUsername('');
+    setUserId('');
     setIsAdmin(false);
-    localStorage.removeItem("currentTodoUser");
-    localStorage.removeItem("currentTodoUserId");
-    localStorage.removeItem("isAdmin");
-    dispatch(setCurrentUser(""));
+    localStorage.removeItem('currentTodoUser');
+    localStorage.removeItem('currentTodoUserId');
+    localStorage.removeItem('isAdmin');
+    dispatch(setCurrentUser(''));
   };
 
   // Handle error display
   useEffect(() => {
     if (error) {
-      console.error("Redux state error:", error);
+      console.error('Redux state error:', error);
     }
   }, [error]);
 
@@ -141,7 +141,7 @@ function App() {
         />
         <div
           className={`${styles.mainContent} ${
-            sidebarOpen ? "" : styles.sidebarClosed
+            sidebarOpen ? '' : styles.sidebarClosed
           }`}
         >
           <PageTitle>TODO List</PageTitle>
@@ -161,7 +161,7 @@ function App() {
         position="bottom-right"
         toastOptions={{
           style: {
-            fontSize: "1.4rem",
+            fontSize: '1.4rem',
           },
         }}
       />
