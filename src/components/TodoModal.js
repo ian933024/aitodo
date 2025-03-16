@@ -1,41 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { MdOutlineClose } from "react-icons/md";
-import { useDispatch } from "react-redux";
-import { AnimatePresence, motion } from "framer-motion";
-import toast from "react-hot-toast";
-import { format, endOfWeek, addDays } from "date-fns";
-import { createTodo, editTodo } from "../slices/todoSlice";
-import styles from "../styles/modules/modal.module.scss";
-import Button from "./Button";
+import React, { useEffect, useState } from 'react';
+import { MdOutlineClose } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
+import { AnimatePresence, motion } from 'framer-motion';
+import toast from 'react-hot-toast';
+import { format, endOfWeek, addDays } from 'date-fns';
+import { createTodo, editTodo } from '../slices/todoSlice';
+import styles from '../styles/modules/modal.module.scss';
+import Button from './Button';
 
 const dropIn = {
   hidden: {
     opacity: 0,
-    transform: "scale(0.9)",
+    transform: 'scale(0.9)',
   },
   visible: {
-    transform: "scale(1)",
+    transform: 'scale(1)',
     opacity: 1,
     transition: {
       duration: 0.1,
-      type: "spring",
+      type: 'spring',
       damping: 25,
       stiffness: 500,
     },
   },
   exit: {
-    transform: "scale(0.9)",
+    transform: 'scale(0.9)',
     opacity: 0,
   },
 };
 
 function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const dispatch = useDispatch();
-  const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("incomplete");
-  const [dueDateType, setDueDateType] = useState("no-due-date");
-  const [customDueDate, setCustomDueDate] = useState("");
-  const [hashtags, setHashtags] = useState("");
+  const [title, setTitle] = useState('');
+  const [status, setStatus] = useState('incomplete');
+  const [dueDateType, setDueDateType] = useState('no-due-date');
+  const [customDueDate, setCustomDueDate] = useState('');
+  const [hashtags, setHashtags] = useState('');
 
   // Calculate end of current week (Sunday)
   const getEndOfWeek = () => endOfWeek(new Date());
@@ -46,37 +46,37 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   // Get the actual due date based on selection
   const getActualDueDate = () => {
     switch (dueDateType) {
-      case "this-week":
-        return format(getEndOfWeek(), "yyyy-MM-dd");
-      case "next-week":
-        return format(getEndOfNextWeek(), "yyyy-MM-dd");
-      case "custom":
+      case 'this-week':
+        return format(getEndOfWeek(), 'yyyy-MM-dd');
+      case 'next-week':
+        return format(getEndOfNextWeek(), 'yyyy-MM-dd');
+      case 'custom':
         return customDueDate;
       default:
-        return "";
+        return '';
     }
   };
 
   useEffect(() => {
-    if (type === "update" && todo) {
+    if (type === 'update' && todo) {
       setTitle(todo.title);
       setStatus(todo.status);
-      setDueDateType(todo.dueDateType || "no-due-date");
-      setCustomDueDate(todo.dueDate || "");
-      setHashtags(todo.hashtags || "");
+      setDueDateType(todo.dueDateType || 'no-due-date');
+      setCustomDueDate(todo.dueDate || '');
+      setHashtags(todo.hashtags || '');
     } else {
-      setTitle("");
-      setStatus("incomplete");
-      setDueDateType("no-due-date");
-      setCustomDueDate("");
-      setHashtags("");
+      setTitle('');
+      setStatus('incomplete');
+      setDueDateType('no-due-date');
+      setCustomDueDate('');
+      setHashtags('');
     }
   }, [type, todo, modalOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title === "") {
-      toast.error("Please enter a title");
+    if (title === '') {
+      toast.error('Please enter a title');
       return;
     }
 
@@ -84,12 +84,12 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
     const dueDate = getActualDueDate();
 
     if (title) {
-      if (type === "add") {
-        const currentUser = localStorage.getItem("currentTodoUser");
+      if (type === 'add') {
+        const currentUser = localStorage.getItem('currentTodoUser');
         const newTodo = {
           title,
-          status: "incomplete", // Always set new tasks to incomplete
-          time: format(new Date(), "p, MM/dd/yyyy"),
+          status: 'incomplete', // Always set new tasks to incomplete
+          time: format(new Date(), 'p, MM/dd/yyyy'),
           dueDate, // Add due date
           dueDateType, // Add due date type
           hashtags, // Add hashtags
@@ -99,14 +99,14 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
         dispatch(createTodo(newTodo))
           .unwrap()
           .then(() => {
-            toast.success("Task added successfully");
+            toast.success('Task added successfully');
             setModalOpen(false);
           })
           .catch((error) => {
             toast.error(`Failed to add task: ${error.message}`);
           });
       }
-      if (type === "update") {
+      if (type === 'update') {
         if (
           todo.title !== title ||
           todo.status !== status ||
@@ -126,14 +126,14 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
           dispatch(editTodo(updatedTodo))
             .unwrap()
             .then(() => {
-              toast.success("Task updated successfully");
+              toast.success('Task updated successfully');
               setModalOpen(false);
             })
             .catch((error) => {
               toast.error(`Failed to update task: ${error.message}`);
             });
         } else {
-          toast.error("No changes made");
+          toast.error('No changes made');
         }
       } else {
         setModalOpen(false);
@@ -173,7 +173,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
 
             <form className={styles.form} onSubmit={(e) => handleSubmit(e)}>
               <h1 className={styles.formTitle}>
-                {type === "add" ? "Add" : "Update"} TODO
+                {type === 'add' ? 'Add' : 'Update'} TODO
               </h1>
               <label htmlFor="title">
                 Title
@@ -197,7 +197,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   <option value="custom">Custom Date</option>
                 </select>
               </label>
-              {dueDateType === "custom" && (
+              {dueDateType === 'custom' && (
                 <label htmlFor="customDate">
                   Select Date
                   <input
@@ -218,7 +218,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   placeholder="e.g. #work #urgent #meeting (separate with spaces)"
                 />
               </label>
-              {type === "update" && (
+              {type === 'update' && (
                 <label htmlFor="type">
                   Status
                   <select
@@ -233,7 +233,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
               )}
               <div className={styles.buttonContainer}>
                 <Button type="submit" variant="primary">
-                  {type === "add" ? "Add Task" : "Update Task"}
+                  {type === 'add' ? 'Add Task' : 'Update Task'}
                 </Button>
                 <Button variant="secondary" onClick={() => setModalOpen(false)}>
                   Cancel

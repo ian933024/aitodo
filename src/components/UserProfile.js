@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import toast from "react-hot-toast";
-import { FaUser, FaLock, FaCheck, FaTimes, FaEnvelope } from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
+import { FaUser, FaLock, FaCheck, FaTimes, FaEnvelope } from 'react-icons/fa';
 import {
   updateUsername,
   updatePassword,
   updateEmail,
   getUserByUsername,
-} from "../firebase/userService";
-import styles from "../styles/modules/login.module.scss";
+} from '../firebase/userService';
+import styles from '../styles/modules/login.module.scss';
 
 function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [newUsername, setNewUsername] = useState(currentUser || "");
-  const [email, setEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [activeTab, setActiveTab] = useState('profile');
+  const [newUsername, setNewUsername] = useState(currentUser || '');
+  const [email, setEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +32,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
           }
         }
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        console.error('Error fetching user details:', error);
       }
     };
 
@@ -46,7 +46,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
     try {
       // Validate username
       if (!newUsername.trim()) {
-        toast.error("Please enter a username");
+        toast.error('Please enter a username');
         setIsLoading(false);
         return;
       }
@@ -62,7 +62,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
             onUsernameChange(newUsername);
           }
         } else {
-          toast.error(result.message || "Failed to update username");
+          toast.error(result.message || 'Failed to update username');
           setIsLoading(false);
           return;
         }
@@ -74,16 +74,16 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
       if (emailResult.success) {
         // Show appropriate success message
         if (usernameUpdated) {
-          toast.success("Profile updated successfully");
+          toast.success('Profile updated successfully');
         } else {
           toast.success(emailResult.message);
         }
       } else {
-        toast.error(emailResult.message || "Failed to update email");
+        toast.error(emailResult.message || 'Failed to update email');
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error(error.message || "An error occurred while updating profile");
+      console.error('Error updating profile:', error);
+      toast.error(error.message || 'An error occurred while updating profile');
     } finally {
       setIsLoading(false);
     }
@@ -99,25 +99,25 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
         !newPassword.trim() ||
         !confirmNewPassword.trim()
       ) {
-        toast.error("Please fill in all password fields");
+        toast.error('Please fill in all password fields');
         setIsLoading(false);
         return;
       }
 
       if (newPassword !== confirmNewPassword) {
-        toast.error("New passwords do not match");
+        toast.error('New passwords do not match');
         setIsLoading(false);
         return;
       }
 
       if (newPassword.length < 6) {
-        toast.error("New password must be at least 6 characters long");
+        toast.error('New password must be at least 6 characters long');
         setIsLoading(false);
         return;
       }
 
       if (currentPassword === newPassword) {
-        toast.error("New password cannot be the same as current password");
+        toast.error('New password cannot be the same as current password');
         setIsLoading(false);
         return;
       }
@@ -125,16 +125,16 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
       const result = await updatePassword(userId, currentPassword, newPassword);
 
       if (result.success) {
-        toast.success("Password updated successfully");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
+        toast.success('Password updated successfully');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
       } else {
-        toast.error(result.message || "Failed to update password");
+        toast.error(result.message || 'Failed to update password');
       }
     } catch (error) {
-      console.error("Error updating password:", error);
-      toast.error(error.message || "An error occurred while updating password");
+      console.error('Error updating password:', error);
+      toast.error(error.message || 'An error occurred while updating password');
     } finally {
       setIsLoading(false);
     }
@@ -163,24 +163,24 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
           <button
             type="button"
             className={`${styles.tabButton} ${
-              activeTab === "profile" ? styles.activeTab : ""
+              activeTab === 'profile' ? styles.activeTab : ''
             }`}
-            onClick={() => setActiveTab("profile")}
+            onClick={() => setActiveTab('profile')}
           >
             Change Username
           </button>
           <button
             type="button"
             className={`${styles.tabButton} ${
-              activeTab === "security" ? styles.activeTab : ""
+              activeTab === 'security' ? styles.activeTab : ''
             }`}
-            onClick={() => setActiveTab("security")}
+            onClick={() => setActiveTab('security')}
           >
             Reset Password
           </button>
         </div>
 
-        {activeTab === "profile" ? (
+        {activeTab === 'profile' ? (
           <form className={styles.loginForm} onSubmit={handleProfileUpdate}>
             <div className={styles.inputGroup}>
               <label htmlFor="username">Current Username</label>
@@ -228,7 +228,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
               whileTap={{ scale: 0.95 }}
               disabled={isLoading}
             >
-              {isLoading ? "Updating..." : "Update Profile"}
+              {isLoading ? 'Updating...' : 'Update Profile'}
             </motion.button>
           </form>
         ) : (
@@ -238,7 +238,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
               <div className={styles.inputWithIcon}>
                 <FaLock className={styles.inputIcon} />
                 <input
-                  type={showCurrentPassword ? "text" : "password"}
+                  type={showCurrentPassword ? 'text' : 'password'}
                   id="currentPassword"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
@@ -249,7 +249,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
                   className={styles.passwordToggle}
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 >
-                  {showCurrentPassword ? "Hide" : "Show"}
+                  {showCurrentPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
             </div>
@@ -259,7 +259,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
               <div className={styles.inputWithIcon}>
                 <FaLock className={styles.inputIcon} />
                 <input
-                  type={showNewPassword ? "text" : "password"}
+                  type={showNewPassword ? 'text' : 'password'}
                   id="newPassword"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -270,7 +270,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
                   className={styles.passwordToggle}
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
-                  {showNewPassword ? "Hide" : "Show"}
+                  {showNewPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
             </div>
@@ -280,7 +280,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
               <div className={styles.inputWithIcon}>
                 <FaLock className={styles.inputIcon} />
                 <input
-                  type={showNewPassword ? "text" : "password"}
+                  type={showNewPassword ? 'text' : 'password'}
                   id="confirmNewPassword"
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
@@ -309,7 +309,7 @@ function UserProfile({ currentUser, userId, onUsernameChange, onClose }) {
               whileTap={{ scale: 0.95 }}
               disabled={isLoading}
             >
-              {isLoading ? "Updating..." : "Update Password"}
+              {isLoading ? 'Updating...' : 'Update Password'}
             </motion.button>
           </form>
         )}
