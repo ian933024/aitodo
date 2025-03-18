@@ -9,6 +9,7 @@
     "date-fns": "latest",
     "firebase": "latest",
     "framer-motion": "latest",
+    "openai": "^4.87.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-hot-toast": "latest",

@@ -8,6 +8,7 @@ import PageTitle from './components/PageTitle';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
 import Chatbot from './components/Chatbot';
+import OpenAITester from './components/OpenAITester';
 import styles from './styles/modules/app.module.scss';
 import { setCurrentUser, fetchTodos } from './slices/todoSlice';
 
@@ -155,10 +156,19 @@ function App() {
     );
   };
 
+  // Check if we should show the OpenAI tester
+  const showOpenAITester = window.location.search.includes('test-openai');
+
   return (
     <>
-      {renderContent()}
-      {isLoggedIn && !isAdmin && <Chatbot />}
+      {showOpenAITester ? (
+        <OpenAITester />
+      ) : (
+        <>
+          {renderContent()}
+          {isLoggedIn && !isAdmin && <Chatbot />}
+        </>
+      )}
       <Toaster
         position="bottom-right"
         toastOptions={{

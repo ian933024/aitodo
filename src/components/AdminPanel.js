@@ -10,6 +10,8 @@ import {
   FaSort,
   FaSortUp,
   FaSortDown,
+  FaRobot,
+  FaCode,
 } from 'react-icons/fa';
 import {
   getAllUsersWithDetails,
@@ -17,6 +19,7 @@ import {
   deleteUserAccount,
 } from '../firebase/userService';
 import { getTodoCount } from '../firebase/todoService';
+import testOpenAIService from '../services/openaiService.test';
 import styles from '../styles/modules/admin.module.scss';
 
 function AdminPanel({ onLogout }) {
@@ -25,9 +28,12 @@ function AdminPanel({ onLogout }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [action, setAction] = useState(null); // 'reset-password' or 'delete'
+  const [action, setAction] = useState(null); // 'reset-password', 'delete', or 'openai-test'
   const [newPassword, setNewPassword] = useState('');
   const [confirmDelete, setConfirmDelete] = useState('');
+  const [isTestingOpenAI, setIsTestingOpenAI] = useState(false);
+  const [openAITestResults, setOpenAITestResults] = useState(null);
+  const [openAITestError, setOpenAITestError] = useState(null);
   const [sortConfig, setSortConfig] = useState({
     key: 'username',
     direction: 'asc',
@@ -166,24 +172,64 @@ function AdminPanel({ onLogout }) {
     setConfirmDelete('');
   };
 
+  const openOpenAITestModal = () => {
+    setAction('openai-test');
+    setOpenAITestResults(null);
+    setOpenAITestError(null);
+  };
+
+  const runOpenAITest = async () => {
+    setIsTestingOpenAI(true);
+    setOpenAITestResults(null);
+    setOpenAITestError(null);
+    
+    try {
+      const testResults = await testOpenAIService();
+      setOpenAITestResults(testResults);
+      
+      if (testResults.success) {
+        toast.success('OpenAI API test completed successfully!');
+      } else {
+        toast.error('OpenAI API test failed');
+      }
+    } catch (error) {
+      console.error('Error running OpenAI test:', error);
+      setOpenAITestError(error.message || 'An unknown error occurred');
+      toast.error(`OpenAI test failed: ${error.message}`);
+    } finally {
+      setIsTestingOpenAI(false);
+    }
+  };
+
   const closeModal = () => {
     setSelectedUser(null);
     setAction(null);
     setNewPassword('');
     setConfirmDelete('');
+    setOpenAITestResults(null);
+    setOpenAITestError(null);
   };
 
   return (
     <div className={styles.adminContainer}>
       <div className={styles.adminHeader}>
         <h1 className={styles.adminTitle}>Admin Dashboard</h1>
-        <button
-          type="button"
-          className={styles.logoutButton}
-          onClick={onLogout}
-        >
-          Logout
-        </button>
+        <div className={styles.adminActions}>
+          <button
+            type="button"
+            className={styles.openaiButton}
+            onClick={openOpenAITestModal}
+          >
+            <FaRobot /> Test OpenAI
+          </button>
+          <button
+            type="button"
+            className={styles.logoutButton}
+            onClick={onLogout}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className={styles.searchContainer}>
@@ -304,7 +350,12 @@ function AdminPanel({ onLogout }) {
       </div>
 
       {selectedUser && action === 'reset-password' && (
-        <div className={styles.modalOverlay}>
+        <div className={styles.modalOverlay} onClick={(e) => {
+          // Close modal if clicking on overlay outside the modal
+          if (e.target === e.currentTarget) {
+            closeModal();
+          }
+        }}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <h2>Reset Password</h2>
@@ -360,7 +411,12 @@ function AdminPanel({ onLogout }) {
       )}
 
       {selectedUser && action === 'delete' && (
-        <div className={styles.modalOverlay}>
+        <div className={styles.modalOverlay} onClick={(e) => {
+          // Close modal if clicking on overlay outside the modal
+          if (e.target === e.currentTarget) {
+            closeModal();
+          }
+        }}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <h2>Delete User</h2>
@@ -415,6 +471,93 @@ function AdminPanel({ onLogout }) {
                   disabled={confirmDelete !== selectedUser.username}
                 >
                   Delete User
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {action === 'openai-test' && (
+        <div className={styles.modalOverlay} onClick={(e) => {
+          // Close modal if clicking on overlay outside the modal
+          if (e.target === e.currentTarget) {
+            closeModal();
+          }
+        }}>
+          <div className={`${styles.modal} ${styles.openaiModal}`}>
+            <div className={styles.modalHeader}>
+              <h2><FaRobot /> OpenAI API Test</h2>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={closeModal}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className={styles.modalContent}>
+              <p>Test the OpenAI API integration with function calling capabilities.</p>
+              
+              <div className={styles.openaiTestInfo}>
+                <h3>This test will verify:</h3>
+                <ul>
+                  <li>Connection to OpenAI API</li>
+                  <li>Function calling functionality</li>
+                  <li>Processing of API responses</li>
+                  <li>Error handling</li>
+                </ul>
+                
+                <div className={styles.apiKeyNote}>
+                  <p><strong>Important:</strong> You must have a valid OpenAI API key set in your <code>.env</code> file.</p>
+                  <p>Environment variable: <code>REACT_APP_OPENAI_API_KEY</code></p>
+                </div>
+              </div>
+              
+              {openAITestError && (
+                <div className={styles.errorMessage}>
+                  <h3>Error:</h3>
+                  <p>{openAITestError}</p>
+                </div>
+              )}
+              
+              {openAITestResults && (
+                <div className={styles.testResults}>
+                  <h3>Test Results:</h3>
+                  <div className={styles.resultStatus}>
+                    Status: <span className={openAITestResults.success ? styles.successText : styles.errorText}>
+                      {openAITestResults.success ? 'Success' : 'Failed'}
+                    </span>
+                  </div>
+                  
+                  {openAITestResults.success && (
+                    <div className={styles.resultDetails}>
+                      <p>All tests completed successfully!</p>
+                      <div className={styles.codeContainer}>
+                        <pre>
+                          {JSON.stringify(openAITestResults.results, null, 2)}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className={styles.openaiTestButton}
+                  onClick={runOpenAITest}
+                  disabled={isTestingOpenAI}
+                >
+                  {isTestingOpenAI ? 'Testing...' : 'Run Test'}
                 </button>
               </div>
             </div>
