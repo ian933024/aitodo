@@ -1,0 +1,161 @@
+@import "../_mixins.scss";
+
+.chatbotContainer {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+}
+
+.chatbotButton {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background-color: var(--primaryPurple);
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-size: 2rem;
+  outline: none;
+
+  &:hover {
+    background-color: var(--primaryPurple);
+  }
+}
+
+.chatbotPanel {
+  position: absolute;
+  bottom: 5.5rem;
+  right: 0;
+  width: 400px;
+  height: 550px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @include smallDeviceSize {
+    width: 320px;
+    height: 450px;
+  }
+}
+
+.chatbotHeader {
+  padding: 1.5rem;
+  background-color: var(--primaryPurple);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+
+  &:hover {
+    color: var(--gray-2);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.messagesContainer {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--bg-2);
+}
+
+.message {
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 80%;
+  word-break: break-word;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.botMessage {
+  align-self: flex-start;
+  background-color: var(--gray-1);
+  color: var(--black-2);
+}
+
+.userMessage {
+  align-self: flex-end;
+  background-color: var(--primaryPurple);
+  color: white;
+}
+
+.inputForm {
+  padding: 1.25rem;
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid var(--gray-1);
+  background-color: white;
+}
+
+.messageInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--gray-1);
+  border-radius: 8px;
+  outline: none;
+  font-size: 1.35rem;
+
+  &:focus {
+    border-color: var(--primaryPurple);
+    box-shadow: 0 0 0 2px rgba(var(--primaryPurple-rgb), 0.1);
+  }
+}
+
+.sendButton {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: var(--primaryPurple);
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: all 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--primaryPurple);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

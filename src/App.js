@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import PageTitle from './components/PageTitle';
 import Login from './components/Login';
 import AdminPanel from './components/AdminPanel';
+import Chatbot from './components/Chatbot';
 import styles from './styles/modules/app.module.scss';
 import { setCurrentUser, fetchTodos } from './slices/todoSlice';
 
@@ -157,6 +158,7 @@ function App() {
   return (
     <>
       {renderContent()}
+      {isLoggedIn && !isAdmin && <Chatbot />}
       <Toaster
         position="bottom-right"
         toastOptions={{
