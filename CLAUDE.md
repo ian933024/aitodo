@@ -1,41 +1,26 @@
 # React Todo App Development Guide
 
-## Build Commands
-
+## Commands
 - `npm start` - Start development server
-- `npm build` - Build production version
+- `npm run build` - Build production version
 - `npm test` - Run all tests
 - `npm test -- --testNamePattern="test name"` - Run specific test
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix linting issues automatically
 
-## Code Style Guidelines
+## Code Style
+- **Components**: Functional components with hooks, PascalCase naming
+- **Imports**: Group by: React core, third-party libs, local imports
+- **State**: Redux Toolkit for global state, useState for component state
+- **CSS**: Use .module.scss files with BEM-inspired naming
+- **Redux**: Use createSlice pattern, dispatch for state changes
+- **Error Handling**: react-hot-toast for notifications, validate inputs
+- **Backend**: Express.js API in backend/ folder
+- **Testing**: Jest for unit tests, descriptive test names
+- **AI/OpenAI**: Use services/openaiService.js for API interactions
+- **Chatbot**: Follow component pattern in Chatbot.js
 
-### Component Structure
-
-- Use functional components with hooks
-- PascalCase for component names (TodoItem, AppHeader)
-- Group imports by type: React core, third-party, local imports
-- Use named exports for utility functions
-
-### State Management
-
-- Use Redux Toolkit for global state
-- Use local useState for component-specific state
-- Follow slice pattern for Redux state organization
-
-### CSS/Styling
-
-- Use CSS modules (.module.scss files)
-- BEM-inspired class naming in modules
-- Use getClasses utility for conditional class names
-
-### Error Handling
-
-- Use react-hot-toast for user notifications
-- Validate inputs before operations
-- Use conditional rendering for UI state management
-
-### Redux Patterns
-
-- Use createSlice for reducers
-- Use dispatch for all state changes
-- Keep selectors in slice files
+## Git Workflow
+- Commit often with descriptive messages
+- Create feature branches from main
+- Squash and rebase before merging to main

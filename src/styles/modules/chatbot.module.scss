@@ -112,6 +112,20 @@
   color: white;
 }
 
+.loadingMessage {
+  animation: pulse 1.5s ease-in-out infinite;
+  font-size: 1.8rem;
+  text-align: center;
+  padding: 0.5rem;
+  min-width: 4rem;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
 .inputForm {
   padding: 1.25rem;
   display: flex;

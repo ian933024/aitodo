@@ -35,13 +35,35 @@ const availableFunctions = {
   },
   
   // Function to create a new task
-  createTask: async (title, status = 'pending') => {
-    // In real implementation, this would dispatch to Redux
-    // or make an API call to create a task
-    console.log(`Creating task: ${title} with status: ${status}`);
+  createTask: async (title, status = 'incomplete', dueDate = null, hashtags = '') => {
+    // This function now just returns the task data
+    // The actual creation happens in Chatbot.js using chatTaskService
+    console.log(`AI requested task creation: ${title}`);
+    
+    // Basic validation of date format if provided
+    let validatedDueDate = dueDate;
+    if (dueDate) {
+      try {
+        // Check if it's a valid date
+        const date = new Date(dueDate);
+        if (isNaN(date.getTime())) {
+          console.warn('Invalid date format from AI:', dueDate);
+          validatedDueDate = null;
+        }
+      } catch (error) {
+        console.error('Error validating due date from AI:', error);
+        validatedDueDate = null;
+      }
+    }
+    
     return {
       success: true,
-      task: { id: Math.floor(Math.random() * 1000), title, status }
+      task: { 
+        title, 
+        status, 
+        dueDate: validatedDueDate, 
+        hashtags 
+      }
     };
   }
 };
@@ -88,8 +110,16 @@ const functionDefinitions = [
         },
         status: {
           type: 'string',
-          enum: ['pending', 'in-progress', 'completed'],
+          enum: ['incomplete', 'complete'],
           description: 'The status of the task'
+        },
+        dueDate: {
+          type: 'string',
+          description: 'The due date in YYYY-MM-DD format (optional)'
+        },
+        hashtags: {
+          type: 'string',
+          description: 'Space-separated hashtags for the task, e.g. "#work #urgent" (optional)'
         }
       },
       required: ['title']

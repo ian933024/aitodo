@@ -69,48 +69,74 @@ function TodoItem({ todo }) {
 
   const handleMoveToNextWeek = () => {
     let newDueDate;
-    if (todo.dueDate) {
-      const [newDateString] = addWeeks(new Date(todo.dueDate), 1)
-        .toISOString()
-        .split('T');
-      newDueDate = newDateString;
-    } else {
-      const [newDateString] = addWeeks(new Date(), 1).toISOString().split('T');
-      newDueDate = newDateString;
-    }
+    try {
+      if (todo.dueDate) {
+        const dueDate = new Date(todo.dueDate);
+        // Validate date
+        if (!isNaN(dueDate.getTime())) {
+          const [newDateString] = addWeeks(dueDate, 1)
+            .toISOString()
+            .split('T');
+          newDueDate = newDateString;
+        } else {
+          // Use current date if invalid
+          const [newDateString] = addWeeks(new Date(), 1).toISOString().split('T');
+          newDueDate = newDateString;
+        }
+      } else {
+        const [newDateString] = addWeeks(new Date(), 1).toISOString().split('T');
+        newDueDate = newDateString;
+      }
 
-    const updatedTodo = { ...todo, dueDate: newDueDate };
-    dispatch(editTodo(updatedTodo))
-      .unwrap()
-      .then(() => {
-        toast.success('Due date moved to next week');
-      })
-      .catch((error) => {
-        toast.error(`Failed to update due date: ${error.message}`);
-      });
+      const updatedTodo = { ...todo, dueDate: newDueDate };
+      dispatch(editTodo(updatedTodo))
+        .unwrap()
+        .then(() => {
+          toast.success('Due date moved to next week');
+        })
+        .catch((error) => {
+          toast.error(`Failed to update due date: ${error.message}`);
+        });
+    } catch (error) {
+      console.error('Error processing date:', error);
+      toast.error('Failed to update due date: Invalid date format');
+    }
   };
 
   const handleMoveToTwoWeeksLater = () => {
     let newDueDate;
-    if (todo.dueDate) {
-      const [newDateString] = addWeeks(new Date(todo.dueDate), 2)
-        .toISOString()
-        .split('T');
-      newDueDate = newDateString;
-    } else {
-      const [newDateString] = addWeeks(new Date(), 2).toISOString().split('T');
-      newDueDate = newDateString;
-    }
+    try {
+      if (todo.dueDate) {
+        const dueDate = new Date(todo.dueDate);
+        // Validate date
+        if (!isNaN(dueDate.getTime())) {
+          const [newDateString] = addWeeks(dueDate, 2)
+            .toISOString()
+            .split('T');
+          newDueDate = newDateString;
+        } else {
+          // Use current date if invalid
+          const [newDateString] = addWeeks(new Date(), 2).toISOString().split('T');
+          newDueDate = newDateString;
+        }
+      } else {
+        const [newDateString] = addWeeks(new Date(), 2).toISOString().split('T');
+        newDueDate = newDateString;
+      }
 
-    const updatedTodo = { ...todo, dueDate: newDueDate };
-    dispatch(editTodo(updatedTodo))
-      .unwrap()
-      .then(() => {
-        toast.success('Due date moved to two weeks later');
-      })
-      .catch((error) => {
-        toast.error(`Failed to update due date: ${error.message}`);
-      });
+      const updatedTodo = { ...todo, dueDate: newDueDate };
+      dispatch(editTodo(updatedTodo))
+        .unwrap()
+        .then(() => {
+          toast.success('Due date moved to two weeks later');
+        })
+        .catch((error) => {
+          toast.error(`Failed to update due date: ${error.message}`);
+        });
+    } catch (error) {
+      console.error('Error processing date:', error);
+      toast.error('Failed to update due date: Invalid date format');
+    }
   };
 
   const handleSetDueToday = () => {
@@ -199,7 +225,21 @@ function TodoItem({ todo }) {
             <p className={styles.time}>
               {todo.dueDate && (
                 <span className={styles.dueDate}>
-                  Due: {format(new Date(todo.dueDate), 'MM/dd/yyyy')}
+                  Due: {
+                    (() => {
+                      try {
+                        const date = new Date(todo.dueDate);
+                        // Check if date is valid
+                        if (isNaN(date.getTime())) {
+                          return 'Invalid date';
+                        }
+                        return format(date, 'MM/dd/yyyy');
+                      } catch (error) {
+                        console.error('Error formatting date:', error);
+                        return 'Invalid date';
+                      }
+                    })()
+                  }
                 </span>
               )}
               {!todo.dueDate && (
