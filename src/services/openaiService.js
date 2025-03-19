@@ -1,11 +1,31 @@
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client
-// Note: In production, use environment variables for the API key
-const openai = new OpenAI({
-  apiKey: process.env.REACT_APP_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Only for frontend demos, not recommended for production
-});
+// Function to get API key from Firebase Functions
+const getApiKey = async () => {
+  // In local development, use the environment variable
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.REACT_APP_OPENAI_API_KEY;
+  }
+  
+  try {
+    // For production, fetch from Firebase Function
+    const response = await fetch('https://us-central1-todo-294ca.cloudfunctions.net/getOpenAIApiKey');
+    const data = await response.json();
+    return data.apiKey;
+  } catch (error) {
+    console.error('Error fetching API key:', error);
+    throw error;
+  }
+};
+
+// Initialize OpenAI with a function that provides the API key
+const createOpenAIClient = async () => {
+  const apiKey = await getApiKey();
+  return new OpenAI({
+    apiKey,
+    dangerouslyAllowBrowser: true // Only for frontend demos, not recommended for production
+  });
+};
 
 // Define available functions that the model can call
 const availableFunctions = {
@@ -135,6 +155,9 @@ const functionDefinitions = [
  */
 export const sendChatMessage = async (messages, options = {}) => {
   try {
+    // Get OpenAI client with API key
+    const openai = await createOpenAIClient();
+    
     // Initial API call with function definitions
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
